@@ -1,0 +1,12 @@
+# Format Go files
+if git diff --cached --name-only | grep -q '\.go$'; then
+  echo "Formatting Go files..."
+  cd apps/backend
+  go fmt ./...
+  goimports -w $(git diff --cached --name-only --relative | grep '\.go$' || true)
+  cd ../..
+  git diff --cached --name-only | grep '\.go$' | xargs git add
+fi
+
+# Format JS/TS/JSON/etc files with Prettier
+bunx lint-staged

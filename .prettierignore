@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+dist
+build
+.next
+.turbo
+
+# Cache
+.cache
+*.tsbuildinfo
+
+# Package manager
+bun.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Go files (use gofmt instead)
+*.go
+go.sum
+go.mod
+
+# Other
+.git
+.env*
+*.min.js
+*.min.css

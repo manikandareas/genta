@@ -4,12 +4,13 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "format:check": "turbo run format:check",
-    "format:fix": "turbo run format:fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean && rimraf node_modules"
+    "clean": "turbo run clean && rimraf node_modules",
+    "prepare": "husky"
   },
   "packageManager": "bun@1.2.13",
   "engines": {
@@ -20,7 +21,15 @@
     "packages/*"
   ],
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.4.2",
     "turbo": "^2.5.5",
     "typescript": "^5.8.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md,html,yaml,yml}": [
+      "prettier --write"
+    ]
   }
 }
