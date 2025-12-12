@@ -43,10 +43,27 @@ Sign Up → Onboarding → Dashboard → Practice → Feedback → Progress Trac
 
 ✅ Adaptive question selection (IRT algorithm)  
 ✅ Real-time AI-generated feedback  
-✅ Readiness score dashboard  
+✅ Readiness score dashboard (7 subtests UTBK)  
 ✅ Progress analytics  
 ✅ Payment integration (Midtrans)  
 ✅ Study session tracking
+
+### **UTBK Subtests (7 Total)**
+
+Platform mendukung semua 7 subtest UTBK resmi:
+
+**TPS (Tes Potensi Skolastik):**
+
+- PU - Penalaran Umum (30 soal)
+- PPU - Pengetahuan dan Pemahaman Umum (20 soal)
+- PBM - Pemahaman Bacaan dan Menulis (20 soal)
+- PK - Pengetahuan Kuantitatif (20 soal)
+
+**Literasi & Penalaran:**
+
+- LBI - Literasi Bahasa Indonesia (20 soal)
+- LBE - Literasi Bahasa Inggris (20 soal)
+- PM - Penalaran Matematika (20 soal)
 
 ---
 
@@ -313,16 +330,19 @@ frontend/
 - Today's goal progress
 - Streak counter (consecutive study days)
 
-**B. Readiness Cards (3x grid, responsive)**
+**B. Readiness Cards (responsive grid)**
 
-- One card per section (PU, PK, PBM)
+- 7 cards total, grouped by category:
+  - **TPS (Tes Potensi Skolastik):** PU, PPU, PBM, PK
+  - **Literasi & Penalaran:** LBI, LBE, PM
 - Each card shows:
-  - Section name
+  - Subtest code & name (e.g., "PU - Penalaran Umum")
   - Accuracy percentage (circular progress)
   - Readiness score (0-100%)
   - Predicted score range
   - "Days to ready" countdown
   - "Practice Now" button
+- Layout: 4 cards (TPS) + 3 cards (Literasi) or responsive 2-3 columns
 
 **C. Quick Stats**
 
@@ -342,11 +362,11 @@ frontend/
 - "View Full Analytics" (secondary)
 - "Upgrade to Premium" (if free tier)
 
-**Responsive:**
+**Responsive (7 subtest cards):**
 
-- Mobile: Stack cards vertically
+- Mobile: Stack cards vertically (1 column)
 - Tablet: 2x grid
-- Desktop: 3x grid
+- Desktop: 4x grid (TPS row) + 3x grid (Literasi row)
 
 ---
 
@@ -363,7 +383,7 @@ frontend/
 **A. Question Section**
 
 - Question number & total in session (e.g., "5/20")
-- Section badge (PU/PK/PBM)
+- Subtest badge (PU/PPU/PBM/PK/LBI/LBE/PM)
 - Question text (with potential passage for reading comprehension)
 - Difficulty indicator (if visible to user)
 
@@ -418,13 +438,19 @@ frontend/
 
 ---
 
-### **6. Readiness Dashboard** (`/readiness/:section`)
+### **6. Readiness Dashboard** (`/readiness/:subtest`)
 
-**Purpose:** Detailed view of section readiness
+**Purpose:** Detailed view of subtest readiness
+
+**Supported Subtests:**
+
+- TPS: PU, PPU, PBM, PK
+- Literasi: LBI, LBE, PM
 
 **Layout:**
 
-- Section header: "[Section Name] Readiness"
+- Subtest header: "[Subtest Name] Readiness" (e.g., "Penalaran Umum Readiness")
+- Category badge: TPS atau Literasi
 - Stats cards (2x2 grid):
   - Overall accuracy %
   - Readiness score %
@@ -448,7 +474,14 @@ frontend/
 
 **C. Subtype Breakdown**
 
-- Show accuracy by question subtype (vocabulary, analogy, logic, etc)
+- Show accuracy by question subtype based on subtest:
+  - PU: Induktif, Deduktif, Kuantitatif
+  - PPU: Pengetahuan Umum, Pemahaman Umum
+  - PBM: Pemahaman Bacaan, Kemampuan Menulis
+  - PK: Aljabar, Geometri, Statistika
+  - LBI: Membaca Kritis, Menulis Efektif
+  - LBE: Reading Comprehension, Grammar & Vocabulary
+  - PM: Penalaran Aljabar, Penalaran Geometri, Penalaran Data
 - Identify weak areas
 - Link to practice specific subtype
 
@@ -486,7 +519,7 @@ frontend/
 
 **D. Section Comparison Chart**
 
-- Bar chart: Accuracy per section (PU, PK, PBM)
+- Bar chart: Accuracy per subtest (PU, PPU, PBM, PK, LBI, LBE, PM)
 - Color-coded bars
 - Show accuracy % on hover
 
@@ -629,7 +662,7 @@ Note: Notification preferences are out of scope for MVP
    ↓
 2. Click "Start Practice" or go to Practice menu
    ↓
-3. Select section (PU/PK/PBM)
+3. Select subtest (PU/PPU/PBM/PK/LBI/LBE/PM)
    ↓
 4. Select sub_type (optional) or "All"
    ↓
@@ -867,9 +900,9 @@ Use for UI-only state:
 
 Use for navigation/filtering:
 
-- Query params: ?section=PU&page=1
+- Query params: ?subtest=PU&page=1
 - Route params: /practice/session/:sessionId
-- Hash: #readiness-section-pu
+- Hash: #readiness-subtest-pu
 
 ---
 

@@ -20,6 +20,20 @@
 
 ## 📊 DATABASE OVERVIEW
 
+### **UTBK Subtests (7 Total)**
+
+Database mendukung semua 7 subtest UTBK resmi:
+
+| Kode | Nama Subtest                   | Kategori | Jumlah Soal |
+| ---- | ------------------------------ | -------- | ----------- |
+| PU   | Penalaran Umum                 | TPS      | 30          |
+| PPU  | Pengetahuan dan Pemahaman Umum | TPS      | 20          |
+| PBM  | Pemahaman Bacaan dan Menulis   | TPS      | 20          |
+| PK   | Pengetahuan Kuantitatif        | TPS      | 20          |
+| LBI  | Literasi Bahasa Indonesia      | Literasi | 20          |
+| LBE  | Literasi Bahasa Inggris        | Literasi | 20          |
+| PM   | Penalaran Matematika           | Literasi | 20          |
+
 ### **Database Type**
 
 - **DBMS:** PostgreSQL 16+
@@ -78,7 +92,7 @@ TOTAL: ~9.5-10GB (comfortable on managed PostgreSQL)
     ┌────▼────────────────────────────────────────┐
     │            user_readiness                   │
     │  ├─ user_id (FK, PK)                        │
-    │  ├─ section (PU/PK/PBM)                     │
+    │  ├─ section (PU/PPU/PBM/PK/LBI/LBE/PM)      │
     │  ├─ current_accuracy                        │
     │  ├─ readiness_score                         │
     │  ├─ predicted_score                         │
@@ -89,7 +103,7 @@ TOTAL: ~9.5-10GB (comfortable on managed PostgreSQL)
 │                 questions                       │
 │  ├─ id (PK)                                     │
 │  ├─ question_bank_id (FK)                       │
-│  ├─ section (PU/PK/PBM)                         │
+│  ├─ section (PU/PPU/PBM/PK/LBI/LBE/PM)          │
 │  ├─ difficulty_irt                              │
 │  ├─ text                                        │
 │  ├─ options (A-E)                               │
@@ -137,9 +151,11 @@ TOTAL: ~9.5-10GB (comfortable on managed PostgreSQL)
 
 - attempt_feedback, question_banks, user_study_sessions
 
-**Support Tables** (Admin/monitoring):
+**Support Tables** (Payments):
 
-- payment_subscriptions, error_logs, question_review_logs
+- payment_subscriptions
+
+**Note:** Error logging dan monitoring dihandle oleh New Relic, bukan database.
 
 ---
 
@@ -205,9 +221,13 @@ CREATE TABLE questions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     question_bank_id UUID REFERENCES question_banks(id),
 
-    -- Question metadata
-    section VARCHAR(10) NOT NULL CHECK (section IN ('PU', 'PK', 'PBM')),
-    sub_type VARCHAR(50),  -- vocab, analogy, logic, algebra, geometry, etc.
+    -- Question metadata (7 subtests sesuai UTBK resmi)
+    -- TPS: PU (Penalaran Umum), PPU (Pengetahuan & Pemahaman Umum),
+    --      PBM (Pemahaman Bacaan & Menulis), PK (Pengetahuan Kuantitatif)
+    -- Literasi: LBI (Literasi Bahasa Indonesia), LBE (Literasi Bahasa Inggris),
+    --           PM (Penalaran Matematika)
+    section VARCHAR(10) NOT NULL CHECK (section IN ('PU', 'PPU', 'PBM', 'PK', 'LBI', 'LBE', 'PM')),
+    sub_type VARCHAR(50),  -- induktif, deduktif, kuantitatif, aljabar, geometri, etc.
 
     -- IRT calibration
     difficulty_irt DECIMAL(4, 2),  -- IRT difficulty parameter (-2 to +2 typically)
@@ -229,13 +249,12 @@ CREATE TABLE questions (
     strategy_tip TEXT,  -- Learning strategy
     related_concept VARCHAR(255),  -- e.g., "percentage_calculation"
 
-    -- Review & validation
-    is_reviewed BOOLEAN DEFAULT false,
-    reviewer_1_name VARCHAR(255),
-    reviewer_1_notes TEXT,
-    reviewer_2_name VARCHAR(255),
-    reviewer_2_notes TEXT,
-    is_ambiguous BOOLEAN DEFAULT false,  -- Flag problematic questions
+    -- Step-by-step solution (optional, untuk soal math/kuantitatif)
+    -- Format: [{"order": 1, "title": "Identifikasi", "content": "..."}, ...]
+    solution_steps JSONB,
+
+    -- Status
+    is_active BOOLEAN DEFAULT true,  -- Soft delete flag
 
     -- Usage stats (denormalized for performance)
     attempt_count INTEGER DEFAULT 0,
@@ -245,7 +264,7 @@ CREATE TABLE questions (
     -- Audit
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP  -- Soft delete (questions shouldn't be deleted)
+    deleted_at TIMESTAMP
 );
 
 -- Indexes
@@ -253,7 +272,7 @@ CREATE INDEX idx_questions_section ON questions(section);
 CREATE INDEX idx_questions_sub_type ON questions(sub_type);
 CREATE INDEX idx_questions_difficulty_irt ON questions(difficulty_irt);
 CREATE INDEX idx_questions_question_bank_id ON questions(question_bank_id);
-CREATE INDEX idx_questions_is_reviewed ON questions(is_reviewed);
+CREATE INDEX idx_questions_is_active ON questions(is_active);
 CREATE INDEX idx_questions_section_difficulty ON questions(section, difficulty_irt);  -- Composite
 ```
 
@@ -317,7 +336,7 @@ Denormalized readiness scores (updated frequently, read often).
 ```sql
 CREATE TABLE user_readiness (
     user_id UUID PRIMARY KEY REFERENCES users(id),
-    section VARCHAR(10) NOT NULL,  -- PU, PK, PBM
+    section VARCHAR(10) NOT NULL,  -- PU, PPU, PBM, PK, LBI, LBE, PM (7 subtests UTBK)
 
     -- Accuracy metrics (last 10 attempts)
     recent_attempts_count INTEGER DEFAULT 0,
@@ -410,11 +429,17 @@ CREATE TABLE question_banks (
     description TEXT,
     source VARCHAR(100),  -- 'official_utbk', 'practice_set', 'user_created'
 
-    -- Content stats
+    -- Content stats (7 subtests sesuai UTBK resmi)
     total_questions INTEGER DEFAULT 0,
-    questions_pu INTEGER DEFAULT 0,
-    questions_pk INTEGER DEFAULT 0,
-    questions_pbm INTEGER DEFAULT 0,
+    -- TPS (Tes Potensi Skolastik)
+    questions_pu INTEGER DEFAULT 0,   -- Penalaran Umum
+    questions_ppu INTEGER DEFAULT 0,  -- Pengetahuan & Pemahaman Umum
+    questions_pbm INTEGER DEFAULT 0,  -- Pemahaman Bacaan & Menulis
+    questions_pk INTEGER DEFAULT 0,   -- Pengetahuan Kuantitatif
+    -- Literasi & Penalaran
+    questions_lbi INTEGER DEFAULT 0,  -- Literasi Bahasa Indonesia
+    questions_lbe INTEGER DEFAULT 0,  -- Literasi Bahasa Inggris
+    questions_pm INTEGER DEFAULT 0,   -- Penalaran Matematika
 
     -- Review status
     is_reviewed BOOLEAN DEFAULT false,
@@ -458,7 +483,7 @@ CREATE TABLE user_study_sessions (
     accuracy_in_session DECIMAL(5, 3),
 
     -- Section focus
-    section VARCHAR(10),  -- PU, PK, PBM, or NULL for mixed
+    section VARCHAR(10),  -- PU, PPU, PBM, PK, LBI, LBE, PM, or NULL for mixed
 
     -- Audit
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -509,71 +534,6 @@ CREATE INDEX idx_payments_subscription_end_date ON payment_subscriptions(subscri
 ```
 
 ---
-
-### **9. error_logs**
-
-Application error tracking (for debugging).
-
-```sql
-CREATE TABLE error_logs (
-    id BIGSERIAL PRIMARY KEY,
-
-    -- Error info
-    error_type VARCHAR(100),  -- 'database_error', 'api_error', 'validation_error'
-    error_message TEXT,
-    error_stack_trace TEXT,
-    severity VARCHAR(20),  -- 'low', 'medium', 'high', 'critical'
-
-    -- Context
-    user_id UUID REFERENCES users(id),
-    endpoint VARCHAR(255),  -- e.g., '/api/attempts'
-    method VARCHAR(10),  -- 'GET', 'POST', etc.
-    http_status_code SMALLINT,
-
-    -- Environment
-    environment VARCHAR(20),  -- 'development', 'staging', 'production'
-
-    -- Audit
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Indexes
-CREATE INDEX idx_error_logs_created_at ON error_logs(created_at DESC);
-CREATE INDEX idx_error_logs_severity ON error_logs(severity);
-CREATE INDEX idx_error_logs_error_type ON error_logs(error_type);
-```
-
----
-
-### **10. question_review_logs**
-
-Track question reviews for quality control.
-
-```sql
-CREATE TABLE question_review_logs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    question_id UUID NOT NULL REFERENCES questions(id),
-
-    -- Review info
-    reviewer_name VARCHAR(255) NOT NULL,
-    review_status VARCHAR(50),  -- 'approved', 'needs_revision', 'rejected'
-    review_notes TEXT,
-
-    -- What was reviewed?
-    reviewed_aspects VARCHAR(500),  -- 'clarity,correctness,authenticity'
-
-    -- Revision tracking
-    needs_revision BOOLEAN DEFAULT false,
-    revision_type VARCHAR(100),  -- 'wording', 'options', 'explanation', 'difficulty'
-
-    -- Audit
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Indexes
-CREATE INDEX idx_review_logs_question_id ON question_review_logs(question_id);
-CREATE INDEX idx_review_logs_review_status ON question_review_logs(review_status);
-```
 
 ---
 
@@ -704,10 +664,17 @@ CREATE TABLE question_banks (
     description TEXT,
     source VARCHAR(100),
 
+    -- Content stats (7 subtests sesuai UTBK resmi)
     total_questions INTEGER DEFAULT 0,
-    questions_pu INTEGER DEFAULT 0,
-    questions_pk INTEGER DEFAULT 0,
-    questions_pbm INTEGER DEFAULT 0,
+    -- TPS (Tes Potensi Skolastik)
+    questions_pu INTEGER DEFAULT 0,   -- Penalaran Umum
+    questions_ppu INTEGER DEFAULT 0,  -- Pengetahuan & Pemahaman Umum
+    questions_pbm INTEGER DEFAULT 0,  -- Pemahaman Bacaan & Menulis
+    questions_pk INTEGER DEFAULT 0,   -- Pengetahuan Kuantitatif
+    -- Literasi & Penalaran
+    questions_lbi INTEGER DEFAULT 0,  -- Literasi Bahasa Indonesia
+    questions_lbe INTEGER DEFAULT 0,  -- Literasi Bahasa Inggris
+    questions_pm INTEGER DEFAULT 0,   -- Penalaran Matematika
 
     is_reviewed BOOLEAN DEFAULT false,
     review_date DATE,
@@ -730,7 +697,8 @@ CREATE TABLE questions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     question_bank_id UUID REFERENCES question_banks(id),
 
-    section VARCHAR(10) NOT NULL CHECK (section IN ('PU', 'PK', 'PBM')),
+    -- 7 subtests sesuai UTBK resmi
+    section VARCHAR(10) NOT NULL CHECK (section IN ('PU', 'PPU', 'PBM', 'PK', 'LBI', 'LBE', 'PM')),
     sub_type VARCHAR(50),
 
     difficulty_irt DECIMAL(4, 2),
@@ -750,12 +718,10 @@ CREATE TABLE questions (
     strategy_tip TEXT,
     related_concept VARCHAR(255),
 
-    is_reviewed BOOLEAN DEFAULT false,
-    reviewer_1_name VARCHAR(255),
-    reviewer_1_notes TEXT,
-    reviewer_2_name VARCHAR(255),
-    reviewer_2_notes TEXT,
-    is_ambiguous BOOLEAN DEFAULT false,
+    -- Step-by-step solution (optional, untuk soal math/kuantitatif)
+    solution_steps JSONB,
+
+    is_active BOOLEAN DEFAULT true,
 
     attempt_count INTEGER DEFAULT 0,
     correct_rate DECIMAL(5, 3),
@@ -770,6 +736,7 @@ CREATE INDEX idx_questions_section ON questions(section);
 CREATE INDEX idx_questions_sub_type ON questions(sub_type);
 CREATE INDEX idx_questions_difficulty_irt ON questions(difficulty_irt);
 CREATE INDEX idx_questions_section_difficulty ON questions(section, difficulty_irt);
+CREATE INDEX idx_questions_is_active ON questions(is_active);
 
 -- ============================================
 -- 4. ATTEMPTS TABLE (CORE)
@@ -813,7 +780,8 @@ CREATE INDEX idx_attempts_feedback_helpful ON attempts(feedback_helpful);
 -- ============================================
 CREATE TABLE user_readiness (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    section VARCHAR(10) NOT NULL CHECK (section IN ('PU', 'PK', 'PBM')),
+    -- 7 subtests sesuai UTBK resmi
+    section VARCHAR(10) NOT NULL CHECK (section IN ('PU', 'PPU', 'PBM', 'PK', 'LBI', 'LBE', 'PM')),
 
     recent_attempts_count INTEGER DEFAULT 0,
     recent_correct_count INTEGER DEFAULT 0,
@@ -921,53 +889,7 @@ CREATE INDEX idx_payments_user_id ON payment_subscriptions(user_id);
 CREATE INDEX idx_payments_payment_status ON payment_subscriptions(payment_status);
 
 -- ============================================
--- 9. ERROR_LOGS TABLE
--- ============================================
-CREATE TABLE error_logs (
-    id BIGSERIAL PRIMARY KEY,
-
-    error_type VARCHAR(100),
-    error_message TEXT,
-    error_stack_trace TEXT,
-    severity VARCHAR(20),
-
-    user_id UUID REFERENCES users(id),
-    endpoint VARCHAR(255),
-    method VARCHAR(10),
-    http_status_code SMALLINT,
-
-    environment VARCHAR(20),
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX idx_error_logs_created_at ON error_logs(created_at DESC);
-CREATE INDEX idx_error_logs_severity ON error_logs(severity);
-
--- ============================================
--- 10. QUESTION_REVIEW_LOGS TABLE
--- ============================================
-CREATE TABLE question_review_logs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    question_id UUID NOT NULL REFERENCES questions(id),
-
-    reviewer_name VARCHAR(255) NOT NULL,
-    review_status VARCHAR(50),
-    review_notes TEXT,
-
-    reviewed_aspects VARCHAR(500),
-
-    needs_revision BOOLEAN DEFAULT false,
-    revision_type VARCHAR(100),
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX idx_review_logs_question_id ON question_review_logs(question_id);
-CREATE INDEX idx_review_logs_review_status ON question_review_logs(review_status);
-
--- ============================================
--- TRIGGERS (Optional)
+-- TRIGGERS
 -- ============================================
 
 -- Auto-update user.updated_at

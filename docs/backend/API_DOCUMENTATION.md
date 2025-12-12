@@ -22,6 +22,20 @@
 
 ## 🌐 API OVERVIEW
 
+### **UTBK Subtests (7 Total)**
+
+API mendukung semua 7 subtest UTBK resmi:
+
+| Kode | Nama Subtest                   | Kategori |
+| ---- | ------------------------------ | -------- |
+| PU   | Penalaran Umum                 | TPS      |
+| PPU  | Pengetahuan dan Pemahaman Umum | TPS      |
+| PBM  | Pemahaman Bacaan dan Menulis   | TPS      |
+| PK   | Pengetahuan Kuantitatif        | TPS      |
+| LBI  | Literasi Bahasa Indonesia      | Literasi |
+| LBE  | Literasi Bahasa Inggris        | Literasi |
+| PM   | Penalaran Matematika           | Literasi |
+
 ### **Base URL**
 
 ```
@@ -752,8 +766,12 @@ Content-Type: application/json
     "study_hours_per_week": 10,
     "initial_readiness": {
       "PU": { "readiness_percentage": 0, "predicted_score_low": 500, "predicted_score_high": 550 },
+      "PPU": { "readiness_percentage": 0, "predicted_score_low": 500, "predicted_score_high": 550 },
+      "PBM": { "readiness_percentage": 0, "predicted_score_low": 500, "predicted_score_high": 550 },
       "PK": { "readiness_percentage": 0, "predicted_score_low": 500, "predicted_score_high": 550 },
-      "PBM": { "readiness_percentage": 0, "predicted_score_low": 500, "predicted_score_high": 550 }
+      "LBI": { "readiness_percentage": 0, "predicted_score_low": 500, "predicted_score_high": 550 },
+      "LBE": { "readiness_percentage": 0, "predicted_score_low": 500, "predicted_score_high": 550 },
+      "PM": { "readiness_percentage": 0, "predicted_score_low": 500, "predicted_score_high": 550 }
     }
   }
 }
@@ -771,15 +789,15 @@ Content-Type: application/json
 
 **Query Parameters:**
 
-| Parameter        | Type    | Required | Description              | Example                 |
-| ---------------- | ------- | -------- | ------------------------ | ----------------------- |
-| `section`        | string  | Yes      | PU, PK, or PBM           | `PU`                    |
-| `sub_type`       | string  | No       | Question subtype         | `vocabulary`, `analogy` |
-| `difficulty_min` | number  | No       | Min IRT difficulty       | `-2`                    |
-| `difficulty_max` | number  | No       | Max IRT difficulty       | `2`                     |
-| `is_reviewed`    | boolean | No       | Filter reviewed          | `true`                  |
-| `page`           | integer | No       | Page number (1-indexed)  | `1`                     |
-| `limit`          | integer | No       | Items per page (max 100) | `10`                    |
+| Parameter        | Type    | Required | Description                       | Example                 |
+| ---------------- | ------- | -------- | --------------------------------- | ----------------------- |
+| `section`        | string  | Yes      | PU, PPU, PBM, PK, LBI, LBE, or PM | `PU`                    |
+| `sub_type`       | string  | No       | Question subtype                  | `vocabulary`, `analogy` |
+| `difficulty_min` | number  | No       | Min IRT difficulty                | `-2`                    |
+| `difficulty_max` | number  | No       | Max IRT difficulty                | `2`                     |
+| `is_reviewed`    | boolean | No       | Filter reviewed                   | `true`                  |
+| `page`           | integer | No       | Page number (1-indexed)           | `1`                     |
+| `limit`          | integer | No       | Items per page (max 100)          | `10`                    |
 
 **Example Request:**
 
@@ -831,9 +849,9 @@ Authorization: Bearer <token>
 
 **Query Parameters:**
 
-| Parameter | Type   | Required | Description    |
-| --------- | ------ | -------- | -------------- |
-| `section` | string | Yes      | PU, PK, or PBM |
+| Parameter | Type   | Required | Description                       |
+| --------- | ------ | -------- | --------------------------------- |
+| `section` | string | Yes      | PU, PPU, PBM, PK, LBI, LBE, or PM |
 
 **Example Request:**
 
@@ -1045,9 +1063,9 @@ Authorization: Bearer <token>
 
 **Query Parameters:**
 
-| Parameter | Type   | Description                                     |
-| --------- | ------ | ----------------------------------------------- |
-| `section` | string | Optional: PU, PK, or PBM (all if not specified) |
+| Parameter | Type   | Description                                                     |
+| --------- | ------ | --------------------------------------------------------------- |
+| `section` | string | Optional: PU, PPU, PBM, PK, LBI, LBE, PM (all if not specified) |
 
 **Example Request:**
 
@@ -1066,6 +1084,8 @@ Authorization: Bearer <token>
   "data": [
     {
       "section": "PU",
+      "section_name": "Penalaran Umum",
+      "category": "TPS",
       "overall_accuracy": 0.68,
       "readiness_percentage": 72,
       "current_theta": 0.35,
@@ -1079,7 +1099,41 @@ Authorization: Bearer <token>
       "recent_attempts": 15
     },
     {
+      "section": "PPU",
+      "section_name": "Pengetahuan dan Pemahaman Umum",
+      "category": "TPS",
+      "overall_accuracy": 0.65,
+      "readiness_percentage": 68,
+      "current_theta": 0.28,
+      "predicted_score_low": 650,
+      "predicted_score_high": 700,
+      "ready_by_date": "2026-02-12",
+      "improvement_rate_per_week": 1.8,
+      "days_to_ready": 25,
+      "total_attempts": 65,
+      "recent_accuracy": 0.68,
+      "recent_attempts": 12
+    },
+    {
+      "section": "PBM",
+      "section_name": "Pemahaman Bacaan dan Menulis",
+      "category": "TPS",
+      "overall_accuracy": 0.7,
+      "readiness_percentage": 74,
+      "current_theta": 0.4,
+      "predicted_score_low": 700,
+      "predicted_score_high": 750,
+      "ready_by_date": "2026-02-01",
+      "improvement_rate_per_week": 2.3,
+      "days_to_ready": 14,
+      "total_attempts": 78,
+      "recent_accuracy": 0.74,
+      "recent_attempts": 12
+    },
+    {
       "section": "PK",
+      "section_name": "Pengetahuan Kuantitatif",
+      "category": "TPS",
       "overall_accuracy": 0.55,
       "readiness_percentage": 58,
       "current_theta": 0.1,
@@ -1093,18 +1147,52 @@ Authorization: Bearer <token>
       "recent_attempts": 18
     },
     {
-      "section": "PBM",
-      "overall_accuracy": 0.7,
-      "readiness_percentage": 74,
-      "current_theta": 0.4,
-      "predicted_score_low": 700,
-      "predicted_score_high": 750,
-      "ready_by_date": "2026-02-01",
-      "improvement_rate_per_week": 2.3,
-      "days_to_ready": 14,
-      "total_attempts": 78,
-      "recent_accuracy": 0.74,
-      "recent_attempts": 12
+      "section": "LBI",
+      "section_name": "Literasi Bahasa Indonesia",
+      "category": "Literasi",
+      "overall_accuracy": 0.72,
+      "readiness_percentage": 76,
+      "current_theta": 0.42,
+      "predicted_score_low": 710,
+      "predicted_score_high": 760,
+      "ready_by_date": "2026-01-28",
+      "improvement_rate_per_week": 2.5,
+      "days_to_ready": 10,
+      "total_attempts": 70,
+      "recent_accuracy": 0.75,
+      "recent_attempts": 14
+    },
+    {
+      "section": "LBE",
+      "section_name": "Literasi Bahasa Inggris",
+      "category": "Literasi",
+      "overall_accuracy": 0.58,
+      "readiness_percentage": 62,
+      "current_theta": 0.15,
+      "predicted_score_low": 620,
+      "predicted_score_high": 670,
+      "ready_by_date": "2026-02-18",
+      "improvement_rate_per_week": 1.6,
+      "days_to_ready": 31,
+      "total_attempts": 55,
+      "recent_accuracy": 0.6,
+      "recent_attempts": 10
+    },
+    {
+      "section": "PM",
+      "section_name": "Penalaran Matematika",
+      "category": "Literasi",
+      "overall_accuracy": 0.52,
+      "readiness_percentage": 55,
+      "current_theta": 0.05,
+      "predicted_score_low": 580,
+      "predicted_score_high": 630,
+      "ready_by_date": "2026-02-28",
+      "improvement_rate_per_week": 1.4,
+      "days_to_ready": 42,
+      "total_attempts": 60,
+      "recent_accuracy": 0.54,
+      "recent_attempts": 11
     }
   ]
 }
@@ -1122,10 +1210,10 @@ Authorization: Bearer <token>
 
 **Query Parameters:**
 
-| Parameter | Type    | Default | Description           |
-| --------- | ------- | ------- | --------------------- |
-| `days`    | integer | 7       | 7, 30, or 90 days     |
-| `section` | string  | all     | Optional: PU, PK, PBM |
+| Parameter | Type    | Default | Description                              |
+| --------- | ------- | ------- | ---------------------------------------- |
+| `days`    | integer | 7       | 7, 30, or 90 days                        |
+| `section` | string  | all     | Optional: PU, PPU, PBM, PK, LBI, LBE, PM |
 
 **Example Request:**
 
@@ -1158,24 +1246,59 @@ Authorization: Bearer <token>
     "section_breakdown": [
       {
         "section": "PU",
+        "section_name": "Penalaran Umum",
         "attempts": 30,
         "correct": 21,
         "accuracy": 0.7,
         "avg_time_seconds": 42
       },
       {
+        "section": "PPU",
+        "section_name": "Pengetahuan dan Pemahaman Umum",
+        "attempts": 25,
+        "correct": 16,
+        "accuracy": 0.64,
+        "avg_time_seconds": 40
+      },
+      {
+        "section": "PBM",
+        "section_name": "Pemahaman Bacaan dan Menulis",
+        "attempts": 29,
+        "correct": 25,
+        "accuracy": 0.86,
+        "avg_time_seconds": 35
+      },
+      {
         "section": "PK",
+        "section_name": "Pengetahuan Kuantitatif",
         "attempts": 28,
         "correct": 15,
         "accuracy": 0.54,
         "avg_time_seconds": 38
       },
       {
-        "section": "PBM",
-        "attempts": 29,
-        "correct": 25,
-        "accuracy": 0.86,
-        "avg_time_seconds": 35
+        "section": "LBI",
+        "section_name": "Literasi Bahasa Indonesia",
+        "attempts": 22,
+        "correct": 17,
+        "accuracy": 0.77,
+        "avg_time_seconds": 32
+      },
+      {
+        "section": "LBE",
+        "section_name": "Literasi Bahasa Inggris",
+        "attempts": 20,
+        "correct": 12,
+        "accuracy": 0.6,
+        "avg_time_seconds": 45
+      },
+      {
+        "section": "PM",
+        "section_name": "Penalaran Matematika",
+        "attempts": 24,
+        "correct": 13,
+        "accuracy": 0.54,
+        "avg_time_seconds": 50
       }
     ],
     "improvement_this_week": 2.1
@@ -1378,9 +1501,9 @@ Authorization: Bearer <token>
 }
 ```
 
-| Field     | Type   | Required | Description                    |
-| --------- | ------ | -------- | ------------------------------ |
-| `section` | string | No       | PU, PK, PBM, or null for mixed |
+| Field     | Type   | Required | Description                                       |
+| --------- | ------ | -------- | ------------------------------------------------- |
+| `section` | string | No       | PU, PPU, PBM, PK, LBI, LBE, PM, or null for mixed |
 
 **Response:** 201 Created
 

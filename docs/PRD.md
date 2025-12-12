@@ -5,6 +5,29 @@
 
 ---
 
+## 📚 STRUKTUR UTBK RESMI
+
+UTBK (Ujian Tulis Berbasis Komputer) terdiri dari **7 subtest** dengan total **150 soal**:
+
+### **TPS (Tes Potensi Skolastik) - 90 soal**
+
+| Kode    | Subtest                        | Jumlah Soal | Deskripsi                                                |
+| ------- | ------------------------------ | ----------- | -------------------------------------------------------- |
+| **PU**  | Penalaran Umum                 | 30 soal     | Penalaran Induktif (10), Deduktif (10), Kuantitatif (10) |
+| **PPU** | Pengetahuan dan Pemahaman Umum | 20 soal     | Pengetahuan umum dan pemahaman konteks                   |
+| **PBM** | Pemahaman Bacaan dan Menulis   | 20 soal     | Kemampuan membaca kritis dan menulis                     |
+| **PK**  | Pengetahuan Kuantitatif        | 20 soal     | Matematika dasar, aljabar, geometri                      |
+
+### **Literasi dan Penalaran - 60 soal**
+
+| Kode    | Subtest                   | Jumlah Soal | Deskripsi                                                 |
+| ------- | ------------------------- | ----------- | --------------------------------------------------------- |
+| **LBI** | Literasi Bahasa Indonesia | 20 soal     | Membaca kritis dan menulis efektif dalam Bahasa Indonesia |
+| **LBE** | Literasi Bahasa Inggris   | 20 soal     | Reading comprehension dan grammar                         |
+| **PM**  | Penalaran Matematika      | 20 soal     | Penalaran aljabar, geometri, dan statistik                |
+
+---
+
 ## 🎯 EXECUTIVE SUMMARY
 
 ### **Product Vision**
@@ -176,13 +199,13 @@ Genta Competitive Advantage:
 #### **IN SCOPE - MVP Must-Haves**
 
 ✅ User authentication (Clerk)  
-✅ 500-600 UTBK-pattern questions (3 sections: PU, PK, PBM)  
+✅ 1000+ UTBK-pattern questions (7 subtests sesuai UTBK resmi)  
 ✅ Adaptive practice with IRT algorithm  
 ✅ AI feedback generation (Best-in-class model selection)  
 ✅ Simple readiness calculation  
 ✅ Basic dashboard  
 ✅ Question + feedback display UI  
-✅ Basic analytics (accuracy by section)  
+✅ Basic analytics (accuracy by subtest)  
 ✅ Free tier + Premium tier (Rp 149K/month)  
 ✅ Mobile-responsive design
 
@@ -295,19 +318,25 @@ Try this on the next percentage problem! ✅"
 **What Student Sees (Dashboard):**
 
 ```
-┌─────────────────────────────────┐
-│   📊 YOUR READINESS             │
-│   ████████░░░░░░░░░░ 62%        │
-│                                 │
-│   📈 Predicted Score: 650-700   │
-│   ⏰ Ready by: Feb 10, 2026     │
-│   ⚠️  3 weeks left              │
-│                                 │
-│   SECTION BREAKDOWN:            │
-│   • Penalaran Umum: 68% ✓       │
-│   • Penalaran Kuant: 55% ⚠️     │
-│   • P. Bacaan: 70% ✓            │
-└─────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│   📊 YOUR READINESS                     │
+│   ████████░░░░░░░░░░ 62%                │
+│                                         │
+│   📈 Predicted Score: 650-700           │
+│   ⏰ Ready by: Feb 10, 2026             │
+│   ⚠️  3 weeks left                      │
+│                                         │
+│   TPS (Tes Potensi Skolastik):          │
+│   • PU - Penalaran Umum: 68% ✓          │
+│   • PPU - Peng. & Pemahaman: 65% ✓      │
+│   • PBM - Bacaan & Menulis: 70% ✓       │
+│   • PK - Peng. Kuantitatif: 55% ⚠️      │
+│                                         │
+│   LITERASI & PENALARAN:                 │
+│   • LBI - Literasi B. Indo: 72% ✓       │
+│   • LBE - Literasi B. Inggris: 58% ⚠️   │
+│   • PM - Penalaran Matematika: 52% ⚠️   │
+└─────────────────────────────────────────┘
 ```
 
 **Formula (Simple, Transparent):**
@@ -355,33 +384,61 @@ Ready Date Calculation:
 **Question Bank:**
 
 ```
-Total: 500-600 questions
+Total: 1000+ questions (sesuai struktur UTBK resmi)
 
 Distribution:
-┌──────────────────────┬────────┬──────────┐
-│ Section              │ Count  │ Subtypes │
-├──────────────────────┼────────┼──────────┤
-│ Penalaran Umum       │ 150    │          │
-│ ├─ Vocab             │ 30     │          │
-│ ├─ Analogy           │ 30     │          │
-│ ├─ Logic             │ 40     │          │
-│ ├─ Math word problem │ 30     │          │
-│ ├─ Diagram reading   │ 20     │          │
-│                      │        │          │
-│ Penalaran Kuantita  │ 150    │          │
-│ ├─ Algebra           │ 40     │          │
-│ ├─ Geometry          │ 35     │          │
-│ ├─ Statistics        │ 30     │          │
-│ ├─ Number theory     │ 25     │          │
-│ ├─ Data analysis     │ 20     │          │
-│                      │        │          │
-│ Pemahaman Bacaan    │ 200    │          │
-│ ├─ Short text (250w) │ 80     │          │
-│ ├─ Long text (500w)  │ 80     │          │
-│ ├─ Double passage    │ 40     │          │
-│                      │        │          │
-│ TOTAL               │ 500-600│          │
-└──────────────────────┴────────┴──────────┘
+┌─────────────────────────────────────┬────────┬──────────────────────────┐
+│ Subtest                             │ Count  │ Subtypes                 │
+├─────────────────────────────────────┼────────┼──────────────────────────┤
+│ TPS (Tes Potensi Skolastik)         │        │                          │
+├─────────────────────────────────────┼────────┼──────────────────────────┤
+│ PU - Penalaran Umum                 │ 150    │                          │
+│ ├─ Penalaran Induktif               │ 50     │                          │
+│ ├─ Penalaran Deduktif               │ 50     │                          │
+│ └─ Penalaran Kuantitatif            │ 50     │                          │
+│                                     │        │                          │
+│ PPU - Pengetahuan & Pemahaman Umum  │ 100    │                          │
+│ ├─ Pengetahuan Umum                 │ 50     │                          │
+│ └─ Pemahaman Umum                   │ 50     │                          │
+│                                     │        │                          │
+│ PBM - Pemahaman Bacaan & Menulis    │ 100    │                          │
+│ ├─ Pemahaman Bacaan                 │ 50     │                          │
+│ └─ Kemampuan Menulis                │ 50     │                          │
+│                                     │        │                          │
+│ PK - Pengetahuan Kuantitatif        │ 100    │                          │
+│ ├─ Aljabar                          │ 35     │                          │
+│ ├─ Geometri                         │ 35     │                          │
+│ └─ Statistika                       │ 30     │                          │
+│                                     │        │                          │
+├─────────────────────────────────────┼────────┼──────────────────────────┤
+│ LITERASI & PENALARAN                │        │                          │
+├─────────────────────────────────────┼────────┼──────────────────────────┤
+│ LBI - Literasi Bahasa Indonesia     │ 100    │                          │
+│ ├─ Membaca Kritis                   │ 50     │                          │
+│ └─ Menulis Efektif                  │ 50     │                          │
+│                                     │        │                          │
+│ LBE - Literasi Bahasa Inggris       │ 100    │                          │
+│ ├─ Reading Comprehension            │ 50     │                          │
+│ └─ Grammar & Vocabulary             │ 50     │                          │
+│                                     │        │                          │
+│ PM - Penalaran Matematika           │ 100    │                          │
+│ ├─ Penalaran Aljabar                │ 35     │                          │
+│ ├─ Penalaran Geometri               │ 35     │                          │
+│ └─ Penalaran Data & Statistik       │ 30     │                          │
+│                                     │        │                          │
+├─────────────────────────────────────┼────────┼──────────────────────────┤
+│ TOTAL                               │ 750+   │                          │
+└─────────────────────────────────────┴────────┴──────────────────────────┘
+
+Catatan: Jumlah soal per subtest di UTBK sebenarnya:
+- PU: 30 soal (Induktif 10, Deduktif 10, Kuantitatif 10)
+- PPU: 20 soal
+- PBM: 20 soal
+- PK: 20 soal
+- LBI: 20 soal
+- LBE: 20 soal
+- PM: 20 soal
+Total: 150 soal per ujian
 ```
 
 **Question Authenticity Checklist:**
@@ -860,24 +917,27 @@ Step 2:
 #### **5. Dashboard**
 
 ```
-┌────────────────────────────────┐
-│ Hello, Rina! 👋               │
-├────────────────────────────────┤
-│ 📊 YOUR READINESS: 68%         │
-│ ██████████░░░░░░░░ (target 75)│
-│ Predicted: 670-720 ✓          │
-│ Ready by: Feb 8, 2026         │
-│                               │
-│ SECTIONS:                      │
-│ PU: 72% ✓   PK: 55% ⚠️        │
-│ PBM: 70% ✓                    │
-│                               │
-│ SESSION STATS:                 │
-│ Today: 12 questions | 83% acc  │
-│ Week: 87 questions | 71% acc   │
-│                               │
-│ [START PRACTICE] [VIEW HISTORY]│
-└────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│ Hello, Rina! 👋                         │
+├─────────────────────────────────────────┤
+│ 📊 YOUR READINESS: 68%                  │
+│ ██████████░░░░░░░░ (target 75)          │
+│ Predicted: 670-720 ✓                    │
+│ Ready by: Feb 8, 2026                   │
+│                                         │
+│ TPS (Tes Potensi Skolastik):            │
+│ PU: 72% ✓   PPU: 65% ✓                  │
+│ PBM: 70% ✓  PK: 55% ⚠️                  │
+│                                         │
+│ LITERASI & PENALARAN:                   │
+│ LBI: 75% ✓  LBE: 58% ⚠️  PM: 52% ⚠️    │
+│                                         │
+│ SESSION STATS:                          │
+│ Today: 12 questions | 83% acc           │
+│ Week: 87 questions | 71% acc            │
+│                                         │
+│ [START PRACTICE] [VIEW HISTORY]         │
+└─────────────────────────────────────────┘
 ```
 
 ---
