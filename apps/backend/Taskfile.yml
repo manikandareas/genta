@@ -53,3 +53,26 @@ tasks:
     - go mod tidy
     - echo 'Verifying dependencies...'
     - go mod verify
+
+  docker:up:
+    desc: start docker containers (postgres, redis)
+    cmds:
+      - docker compose up -d
+
+  docker:down:
+    desc: stop docker containers
+    cmds:
+      - docker compose down
+
+  docker:logs:
+    desc: show docker container logs
+    cmds:
+      - docker compose logs -f
+
+  docker:reset:
+    desc: reset docker volumes (WARNING - deletes all data)
+    deps:
+      - confirm
+    cmds:
+      - docker compose down -v
+      - docker compose up -d
