@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "PRD.md",
+                "file": "BACKLOG_AND_SPRINTS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "PRD"
+              "title": "BACKLOG_AND_SPRINTS"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "PRD.md",
+                "file": "BACKLOG_AND_SPRINTS.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for PRD"
+              "title": "Backlinks for BACKLOG_AND_SPRINTS"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "PRD.md",
+                "file": "BACKLOG_AND_SPRINTS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from PRD"
+              "title": "Outgoing links from BACKLOG_AND_SPRINTS"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "PRD.md",
+                "file": "BACKLOG_AND_SPRINTS.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of PRD"
+              "title": "Outline of BACKLOG_AND_SPRINTS"
             }
           }
         ]
@@ -184,5 +184,9 @@
     }
   },
   "active": "0fe40761b617dd7a",
-  "lastOpenFiles": ["ADDING_NEW_RESOURCE.md"]
+  "lastOpenFiles": [
+    "PRD.md",
+    "BACKLOG_AND_SPRINTS.md",
+    "ADDING_NEW_RESOURCE.md"
+  ]
 }

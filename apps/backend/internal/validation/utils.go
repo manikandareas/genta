@@ -112,3 +112,9 @@ var uuidRegex = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4
 func IsValidUUID(uuid string) bool {
 	return uuidRegex.MatchString(uuid)
 }
+
+type EmptyRequest struct{}
+
+func (r EmptyRequest) Validate() error {
+	return nil
+}

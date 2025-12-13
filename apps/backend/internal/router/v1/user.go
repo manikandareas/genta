@@ -7,10 +7,11 @@ import (
 )
 
 func registerUserRoutes(r *echo.Group, h *handler.UserHandler, auth *middleware.AuthMiddleware) {
-	// Todo operations
-	todos := r.Group("/users")
-	todos.Use(auth.RequireAuth)
+	// User operations
+	users := r.Group("/users")
+	users.Use(auth.RequireAuth)
 
 	// me
-	todos.PUT("/me", h.UpdateUser)
+	users.GET("/me", h.GetUser)
+	users.PUT("/me", h.UpdateUser)
 }

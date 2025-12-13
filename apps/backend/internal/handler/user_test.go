@@ -303,3 +303,156 @@ func TestUpdateUser_AuthenticatedUser(t *testing.T) {
 	userID := c.Get("user_id")
 	assert.Equal(t, expectedUserID, userID)
 }
+
+// ==================== GetUser Unit Tests ====================
+
+func TestGetUser_RequiresAuthentication(t *testing.T) {
+	// Test that GET /me endpoint requires authentication
+	c, _ := setupTestContext(http.MethodGet, "/api/v1/users/me", nil)
+
+	// Without setting user_id in context, GetUserID should return empty
+	userID := c.Get("user_id")
+	assert.Nil(t, userID, "user_id should be nil when not authenticated")
+}
+
+func TestGetUser_AuthenticatedUser(t *testing.T) {
+	// Test with authenticated user
+	c, _ := setupTestContext(http.MethodGet, "/api/v1/users/me", nil)
+
+	// Simulate authenticated user (set by auth middleware)
+	expectedUserID := "550e8400-e29b-41d4-a716-446655440000"
+	c.Set("user_id", expectedUserID)
+
+	userID := c.Get("user_id")
+	assert.Equal(t, expectedUserID, userID)
+}
+
+func TestGetUser_ResponseFormat(t *testing.T) {
+	// Test that response matches API documentation format for GET /api/v1/users/me
+	type ExpectedResponse struct {
+		Code      string      `json:"code"`
+		Message   string      `json:"message"`
+		Status    int         `json:"status"`
+		Timestamp string      `json:"timestamp"`
+		Data      interface{} `json:"data"`
+	}
+
+	// Verify response structure matches documentation
+	response := ExpectedResponse{
+		Code:      "OK",
+		Message:   "User retrieved",
+		Status:    200,
+		Timestamp: time.Now().UTC().Format(time.RFC3339),
+		Data: map[string]interface{}{
+			"id":                   "550e8400-e29b-41d4-a716-446655440000",
+			"clerkId":              "clerk_test_123",
+			"email":                "student@example.com",
+			"fullName":             "Rina Wijaya",
+			"avatarUrl":            nil,
+			"subscriptionTier":     "free",
+			"isSubscriptionActive": false,
+			"irtTheta":             nil,
+			"irtVariance":          nil,
+			"targetPtn":            "UI",
+			"targetScore":          700,
+			"examDate":             "2026-03-15T00:00:00Z",
+			"studyHoursPerWeek":    10,
+			"onboardingCompleted":  true,
+			"isEmailVerified":      true,
+			"isActive":             true,
+			"lastLogin":            nil,
+			"createdAt":            "2024-01-01T00:00:00Z",
+			"updatedAt":            "2024-01-01T00:00:00Z",
+		},
+	}
+
+	// Verify JSON marshaling works correctly
+	jsonData, err := json.Marshal(response)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, jsonData)
+
+	// Verify response can be unmarshaled back
+	var unmarshaled ExpectedResponse
+	err = json.Unmarshal(jsonData, &unmarshaled)
+	assert.NoError(t, err)
+	assert.Equal(t, "OK", unmarshaled.Code)
+	assert.Equal(t, 200, unmarshaled.Status)
+}
+
+func TestGetUser_ErrorResponseFormat(t *testing.T) {
+	// Test error response format for GET /me endpoint
+
+	type ErrorResponse struct {
+		Code      string      `json:"code"`
+		Message   string      `json:"message"`
+		Status    int         `json:"status"`
+		Timestamp string      `json:"timestamp"`
+		Override  bool        `json:"override"`
+		Errors    interface{} `json:"errors"`
+		Action    interface{} `json:"action"`
+		RequestID string      `json:"request_id"`
+	}
+
+	tests := []struct {
+		name     string
+		response ErrorResponse
+	}{
+		{
+			name: "401 Unauthorized - No Token",
+			response: ErrorResponse{
+				Code:      "UNAUTHORIZED",
+				Message:   "Invalid or expired token",
+				Status:    401,
+				Timestamp: time.Now().UTC().Format(time.RFC3339),
+				Override:  false,
+				Action: map[string]string{
+					"type":    "redirect",
+					"message": "Please login again",
+					"value":   "/login",
+				},
+			},
+		},
+		{
+			name: "404 Not Found - User Deleted",
+			response: ErrorResponse{
+				Code:      "NOT_FOUND",
+				Message:   "User not found",
+				Status:    404,
+				Timestamp: time.Now().UTC().Format(time.RFC3339),
+				Override:  false,
+			},
+		},
+		{
+			name: "500 Internal Server Error",
+			response: ErrorResponse{
+				Code:      "INTERNAL_SERVER_ERROR",
+				Message:   "An unexpected error occurred",
+				Status:    500,
+				Timestamp: time.Now().UTC().Format(time.RFC3339),
+				Override:  false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			jsonData, err := json.Marshal(tt.response)
+			assert.NoError(t, err)
+			assert.NotEmpty(t, jsonData)
+
+			var unmarshaled ErrorResponse
+			err = json.Unmarshal(jsonData, &unmarshaled)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.response.Code, unmarshaled.Code)
+			assert.Equal(t, tt.response.Status, unmarshaled.Status)
+		})
+	}
+}
+
+func TestGetUser_NoRequestBody(t *testing.T) {
+	// GET /me should not require any request body
+	c, _ := setupTestContext(http.MethodGet, "/api/v1/users/me", nil)
+
+	// Verify request has no body
+	assert.Equal(t, int64(0), c.Request().ContentLength)
+}

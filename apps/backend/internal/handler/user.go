@@ -8,6 +8,7 @@ import (
 	"github.com/manikandareas/genta/internal/model/user"
 	"github.com/manikandareas/genta/internal/server"
 	"github.com/manikandareas/genta/internal/service"
+	"github.com/manikandareas/genta/internal/validation"
 )
 
 type UserHandler struct {
@@ -31,5 +32,17 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 		},
 		http.StatusOK,
 		&user.PutUserRequest{},
+	)(c)
+}
+
+func (h *UserHandler) GetUser(c echo.Context) error {
+	return Handle(
+		h.Handler,
+		func(c echo.Context, _ validation.EmptyRequest) (*user.User, error) {
+			userID := middleware.GetUserID(c)
+			return h.userService.GetUser(c, userID)
+		},
+		http.StatusOK,
+		validation.EmptyRequest{},
 	)(c)
 }

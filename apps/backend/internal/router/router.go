@@ -59,5 +59,13 @@ func NewRouter(s *server.Server, h *handler.Handlers, services *service.Services
 
 	v1.RegisterV1Routes(v1Router, h, middlewares)
 
+	// Log all registered routes
+	for _, route := range router.Routes() {
+		s.Logger.Info().
+			Str("method", route.Method).
+			Str("path", route.Path).
+			Msg("route registered")
+	}
+
 	return router
 }

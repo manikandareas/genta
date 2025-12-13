@@ -48,5 +48,16 @@ func (s *UserService) UpdateUser(ctx echo.Context, userID string, request *user.
 		Msg("User updated successfully")
 
 	return updatedUser, nil
+}
 
+func (s *UserService) GetUser(ctx echo.Context, userID string) (*user.User, error) {
+	logger := middleware.GetLogger(ctx)
+
+	user, err := s.userRepo.GetUserByID(ctx.Request().Context(), userID)
+	if err != nil {
+		logger.Error().Err(err).Msg("failed to get user")
+		return nil, err
+	}
+
+	return user, nil
 }

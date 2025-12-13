@@ -1,4 +1,4 @@
-// go:build integration
+//go:build integration
 
 package handler
 
@@ -375,4 +375,287 @@ func TestUserIntegration_UpdateUser_EmptyRequest(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, originalName, *dbFullName, "original name should remain unchanged")
+}
+
+// ==================== GetUser Integration Tests ====================
+
+// TestUserIntegration_GetUser_Success tests the full flow of getting current user
+func TestUserIntegration_GetUser_Success(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	// Create a test user in the database
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "test_" + uuid.New().String()[:8] + "@example.com"
+	fullName := "Test User"
+	targetPtn := "UI"
+	targetScore := 700
+
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, full_name, target_ptn, target_score, subscription_tier, is_active, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
+	`, testUserID, clerkID, email, fullName, targetPtn, targetScore, "free", true)
+	require.NoError(t, err, "failed to create test user")
+
+	// Setup repository, service, and handler
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo)
+	userHandler := NewUserHandler(testServer, userService)
+
+	// Create Echo instance and request
+	e := echo.New()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/users/me", nil)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	// Set user_id in context (simulating auth middleware)
+	c.Set("user_id", testUserID.String())
+
+	// Set logger in context
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	// Execute handler
+	err = userHandler.GetUser(c)
+	require.NoError(t, err, "handler should not return error")
+
+	// Assert response status
+	assert.Equal(t, http.StatusOK, rec.Code, "should return 200 OK")
+
+	// Parse response body
+	var response user.User
+	err = json.Unmarshal(rec.Body.Bytes(), &response)
+	require.NoError(t, err, "should be able to parse response")
+
+	// Assert response data
+	assert.Equal(t, testUserID, response.ID, "user ID should match")
+	assert.Equal(t, clerkID, response.ClerkID, "clerk ID should match")
+	assert.Equal(t, email, response.Email, "email should match")
+	assert.Equal(t, fullName, *response.FullName, "full name should match")
+	assert.Equal(t, targetPtn, *response.TargetPtn, "target PTN should match")
+	assert.Equal(t, targetScore, *response.TargetScore, "target score should match")
+	assert.Equal(t, "free", response.SubscriptionTier, "subscription tier should match")
+	assert.True(t, response.IsActive, "user should be active")
+}
+
+// TestUserIntegration_GetUser_NotFound tests getting non-existent user
+func TestUserIntegration_GetUser_NotFound(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	_, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/users/me", nil)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	// Use non-existent user ID
+	c.Set("user_id", uuid.New().String())
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err := userHandler.GetUser(c)
+
+	// Handler should return error for not found
+	assert.Error(t, err, "should return error for non-existent user")
+}
+
+// TestUserIntegration_GetUser_DeletedUser tests getting a soft-deleted user
+func TestUserIntegration_GetUser_DeletedUser(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	// Create a soft-deleted user
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "deleted_" + uuid.New().String()[:8] + "@example.com"
+
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, subscription_tier, is_active, created_at, updated_at, deleted_at)
+		VALUES ($1, $2, $3, $4, $5, NOW(), NOW(), NOW())
+	`, testUserID, clerkID, email, "free", false)
+	require.NoError(t, err)
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/users/me", nil)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	c.Set("user_id", testUserID.String())
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err = userHandler.GetUser(c)
+
+	// Should return error for deleted user (deleted_at IS NOT NULL)
+	assert.Error(t, err, "should return error for deleted user")
+}
+
+// TestUserIntegration_GetUser_WithAllFields tests getting user with all fields populated
+func TestUserIntegration_GetUser_WithAllFields(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "full_" + uuid.New().String()[:8] + "@example.com"
+	fullName := "Complete User"
+	avatarUrl := "https://example.com/avatar.jpg"
+	targetPtn := "UGM"
+	targetScore := 750
+	studyHours := int16(20)
+	examDate := time.Date(2026, 6, 15, 0, 0, 0, 0, time.UTC)
+	irtTheta := 0.5
+	irtVariance := 0.1
+
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (
+			id, clerk_id, email, full_name, avatar_url, 
+			subscription_tier, is_subscription_active,
+			irt_theta, irt_variance, irt_last_updated,
+			target_ptn, target_score, exam_date, study_hours_per_week, onboarding_completed,
+			is_email_verified, is_active, last_login,
+			created_at, updated_at
+		)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), $10, $11, $12, $13, $14, $15, $16, NOW(), NOW(), NOW())
+	`, testUserID, clerkID, email, fullName, avatarUrl,
+		"premium", true,
+		irtTheta, irtVariance,
+		targetPtn, targetScore, examDate, studyHours, true,
+		true, true)
+	require.NoError(t, err)
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/users/me", nil)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	c.Set("user_id", testUserID.String())
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err = userHandler.GetUser(c)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	var response user.User
+	err = json.Unmarshal(rec.Body.Bytes(), &response)
+	require.NoError(t, err)
+
+	// Verify all fields
+	assert.Equal(t, testUserID, response.ID)
+	assert.Equal(t, clerkID, response.ClerkID)
+	assert.Equal(t, email, response.Email)
+	assert.Equal(t, fullName, *response.FullName)
+	assert.Equal(t, avatarUrl, *response.AvatarUrl)
+	assert.Equal(t, "premium", response.SubscriptionTier)
+	assert.True(t, response.IsSubscriptionActive)
+	assert.InDelta(t, irtTheta, *response.IrtTheta, 0.001)
+	assert.InDelta(t, irtVariance, *response.IrtVariance, 0.001)
+	assert.Equal(t, targetPtn, *response.TargetPtn)
+	assert.Equal(t, targetScore, *response.TargetScore)
+	assert.Equal(t, studyHours, *response.StudyHoursPerWeek)
+	assert.True(t, response.OnboardingCompleted)
+	assert.True(t, response.IsEmailVerified)
+	assert.True(t, response.IsActive)
+}
+
+// TestUserIntegration_GetUser_MinimalFields tests getting user with only required fields
+func TestUserIntegration_GetUser_MinimalFields(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "minimal_" + uuid.New().String()[:8] + "@example.com"
+
+	// Insert user with only required fields
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, subscription_tier, is_active, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+	`, testUserID, clerkID, email, "free", true)
+	require.NoError(t, err)
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/users/me", nil)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	c.Set("user_id", testUserID.String())
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err = userHandler.GetUser(c)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	var response user.User
+	err = json.Unmarshal(rec.Body.Bytes(), &response)
+	require.NoError(t, err)
+
+	// Verify required fields
+	assert.Equal(t, testUserID, response.ID)
+	assert.Equal(t, clerkID, response.ClerkID)
+	assert.Equal(t, email, response.Email)
+	assert.Equal(t, "free", response.SubscriptionTier)
+	assert.True(t, response.IsActive)
+
+	// Verify optional fields are nil (except IRT fields which may have default values)
+	assert.Nil(t, response.FullName)
+	assert.Nil(t, response.AvatarUrl)
+	assert.Nil(t, response.TargetPtn)
+	assert.Nil(t, response.TargetScore)
+	assert.Nil(t, response.ExamDate)
+	assert.Nil(t, response.StudyHoursPerWeek)
+	// Note: IrtTheta and IrtVariance may have default values from database
 }
