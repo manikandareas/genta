@@ -5,9 +5,7 @@
       "get": {
         "description": "Get health status",
         "summary": "Get health",
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "parameters": [],
         "operationId": "getHealth",
         "responses": {
@@ -20,10 +18,7 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "healthy",
-                        "unhealthy"
-                      ]
+                      "enum": ["healthy", "unhealthy"]
                     },
                     "timestamp": {
                       "type": "string",
@@ -48,10 +43,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "status",
-                            "response_time"
-                          ]
+                          "required": ["status", "response_time"]
                         },
                         "redis": {
                           "type": "object",
@@ -66,28 +58,594 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "status",
-                            "response_time"
-                          ]
+                          "required": ["status", "response_time"]
                         }
                       },
-                      "required": [
-                        "database"
-                      ]
+                      "required": ["database"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "timestamp",
-                    "environment",
-                    "checks"
-                  ]
+                  "required": ["status", "timestamp", "environment", "checks"]
                 }
               }
             }
           }
         }
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "description": "Get the currently authenticated user's profile",
+        "summary": "Get current user",
+        "tags": ["User"],
+        "parameters": [],
+        "operationId": "getMe",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "clerkId": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "fullName": {
+                      "type": "string",
+                      "maxLength": 255,
+                      "nullable": true
+                    },
+                    "avatarUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "nullable": true
+                    },
+                    "subscriptionTier": {
+                      "type": "string"
+                    },
+                    "subscriptionStartDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "subscriptionEndDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "isSubscriptionActive": {
+                      "type": "boolean"
+                    },
+                    "irtTheta": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "irtVariance": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "irtLastUpdated": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "targetPtn": {
+                      "type": "string",
+                      "maxLength": 100,
+                      "nullable": true
+                    },
+                    "targetScore": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "nullable": true
+                    },
+                    "examDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "studyHoursPerWeek": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 168,
+                      "nullable": true
+                    },
+                    "onboardingCompleted": {
+                      "type": "boolean"
+                    },
+                    "isEmailVerified": {
+                      "type": "boolean"
+                    },
+                    "isActive": {
+                      "type": "boolean"
+                    },
+                    "lastLogin": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "deletedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "clerkId",
+                    "email",
+                    "fullName",
+                    "avatarUrl",
+                    "subscriptionTier",
+                    "subscriptionStartDate",
+                    "subscriptionEndDate",
+                    "isSubscriptionActive",
+                    "irtTheta",
+                    "irtVariance",
+                    "irtLastUpdated",
+                    "targetPtn",
+                    "targetScore",
+                    "examDate",
+                    "studyHoursPerWeek",
+                    "onboardingCompleted",
+                    "isEmailVerified",
+                    "isActive",
+                    "lastLogin",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "description": "Update the currently authenticated user's profile",
+        "summary": "Update current user",
+        "tags": ["User"],
+        "parameters": [],
+        "operationId": "updateMe",
+        "requestBody": {
+          "description": "Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string",
+                    "maxLength": 255
+                  },
+                  "targetPtn": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "targetScore": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "examDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "studyHoursPerWeek": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 168
+                  },
+                  "onboardingCompleted": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "clerkId": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "fullName": {
+                      "type": "string",
+                      "maxLength": 255,
+                      "nullable": true
+                    },
+                    "avatarUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "nullable": true
+                    },
+                    "subscriptionTier": {
+                      "type": "string"
+                    },
+                    "subscriptionStartDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "subscriptionEndDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "isSubscriptionActive": {
+                      "type": "boolean"
+                    },
+                    "irtTheta": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "irtVariance": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "irtLastUpdated": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "targetPtn": {
+                      "type": "string",
+                      "maxLength": 100,
+                      "nullable": true
+                    },
+                    "targetScore": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "nullable": true
+                    },
+                    "examDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "studyHoursPerWeek": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 168,
+                      "nullable": true
+                    },
+                    "onboardingCompleted": {
+                      "type": "boolean"
+                    },
+                    "isEmailVerified": {
+                      "type": "boolean"
+                    },
+                    "isActive": {
+                      "type": "boolean"
+                    },
+                    "lastLogin": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "deletedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "clerkId",
+                    "email",
+                    "fullName",
+                    "avatarUrl",
+                    "subscriptionTier",
+                    "subscriptionStartDate",
+                    "subscriptionEndDate",
+                    "isSubscriptionActive",
+                    "irtTheta",
+                    "irtVariance",
+                    "irtLastUpdated",
+                    "targetPtn",
+                    "targetScore",
+                    "examDate",
+                    "studyHoursPerWeek",
+                    "onboardingCompleted",
+                    "isEmailVerified",
+                    "isActive",
+                    "lastLogin",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/onboarding": {
+      "post": {
+        "description": "Complete the onboarding process for the current user",
+        "summary": "Complete user onboarding",
+        "tags": ["User"],
+        "parameters": [],
+        "operationId": "completeOnboarding",
+        "requestBody": {
+          "description": "Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "targetPtn": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "targetScore": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "examDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "studyHoursPerWeek": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 168
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "onboarding_completed": {
+                      "type": "boolean"
+                    },
+                    "target_ptn": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "target_score": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "exam_date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "study_hours_per_week": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "initial_readiness": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "readiness_percentage": {
+                            "type": "number"
+                          },
+                          "predicted_score_low": {
+                            "type": "integer"
+                          },
+                          "predicted_score_high": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "readiness_percentage",
+                          "predicted_score_low",
+                          "predicted_score_high"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "onboarding_completed",
+                    "target_ptn",
+                    "target_score",
+                    "exam_date",
+                    "study_hours_per_week",
+                    "initial_readiness"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
