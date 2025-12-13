@@ -84,11 +84,11 @@
 | ------ | ----------------------------------------------------- | -------- | --- | ------ | ------ |
 | BE-013 | Integrate Clerk JWT validation middleware             | 🔴 P0    | 3   | 2      | ✅     |
 | BE-014 | Create users table migration                          | 🔴 P0    | 2   | 2      | ✅     |
-| BE-015 | Implement user repository (CRUD)                      | 🔴 P0    | 3   | 2      | ⬜     |
-| BE-016 | Implement user service layer                          | 🔴 P0    | 2   | 2      | ⬜     |
+| BE-015 | Implement user repository (CRUD)                      | 🔴 P0    | 3   | 2      | ✅     |
+| BE-016 | Implement user service layer                          | 🔴 P0    | 2   | 2      | ✅     |
 | BE-017 | `GET /api/v1/auth/me` - Get current user              | 🔴 P0    | 2   | 2      | ✅     |
 | BE-018 | `PUT /api/v1/users/me` - Update user profile          | 🔴 P0    | 2   | 2      | ✅     |
-| BE-019 | `POST /api/v1/users/onboarding` - Complete onboarding | 🔴 P0    | 3   | 2      | ⬜     |
+| BE-019 | `POST /api/v1/users/onboarding` - Complete onboarding | 🔴 P0    | 3   | 2      | ✅     |
 | BE-020 | Clerk webhook handler (user.created, user.updated)    | 🟠 P1    | 3   | 2      | ⬜     |
 | BE-021 | User session management dengan Redis                  | 🟠 P1    | 2   | 2      | -      |
 | BE-022 | Rate limiting middleware                              | 🟠 P1    | 2   | 2      | ✅     |

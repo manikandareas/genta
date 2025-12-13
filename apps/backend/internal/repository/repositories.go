@@ -3,11 +3,13 @@ package repository
 import "github.com/manikandareas/genta/internal/server"
 
 type Repositories struct {
-	User *UserRepository
+	User      *UserRepository
+	Readiness *ReadinessRepository
 }
 
 func NewRepositories(s *server.Server) *Repositories {
 	return &Repositories{
-		User: NewUserRepository(s),
+		User:      NewUserRepository(s),
+		Readiness: NewReadinessRepository(s),
 	}
 }

@@ -8,22 +8,25 @@ import (
 	"github.com/manikandareas/genta/internal/errs"
 	"github.com/manikandareas/genta/internal/lib/clerk"
 	"github.com/manikandareas/genta/internal/middleware"
+	"github.com/manikandareas/genta/internal/model/readiness"
 	"github.com/manikandareas/genta/internal/model/user"
 	"github.com/manikandareas/genta/internal/repository"
 	"github.com/manikandareas/genta/internal/server"
 )
 
 type UserService struct {
-	server      *server.Server
-	userRepo    *repository.UserRepository
-	clerkClient *clerk.Clerk
+	server        *server.Server
+	userRepo      *repository.UserRepository
+	readinessRepo *repository.ReadinessRepository
+	clerkClient   *clerk.Clerk
 }
 
-func NewUserService(server *server.Server, userRepo *repository.UserRepository, clerkClient *clerk.Clerk) *UserService {
+func NewUserService(server *server.Server, userRepo *repository.UserRepository, readinessRepo *repository.ReadinessRepository, clerkClient *clerk.Clerk) *UserService {
 	return &UserService{
-		server:      server,
-		userRepo:    userRepo,
-		clerkClient: clerkClient,
+		server:        server,
+		userRepo:      userRepo,
+		readinessRepo: readinessRepo,
+		clerkClient:   clerkClient,
 	}
 }
 
@@ -72,7 +75,7 @@ func (s *UserService) CompleteOnboarding(ctx echo.Context, clerkID string, reque
 	logger := middleware.GetLogger(ctx)
 
 	// validate user exist by clerk_id, create if not exist
-	_, err := s.userRepo.GetUserByClerkID(ctx.Request().Context(), clerkID)
+	existingUser, err := s.userRepo.GetUserByClerkID(ctx.Request().Context(), clerkID)
 	if err != nil {
 		logger.Info().Str("clerk_id", clerkID).Msg("user not found, creating new user")
 
@@ -112,7 +115,7 @@ func (s *UserService) CompleteOnboarding(ctx echo.Context, clerkID string, reque
 			email = userFromClerk.EmailAddresses[0].EmailAddress
 		}
 
-		_, err = s.userRepo.CreateUser(ctx.Request().Context(), &user.CreateUserRequest{
+		existingUser, err = s.userRepo.CreateUser(ctx.Request().Context(), &user.CreateUserRequest{
 			ClerkID:   clerkID,
 			Email:     email,
 			FullName:  fullName,
@@ -124,21 +127,40 @@ func (s *UserService) CompleteOnboarding(ctx echo.Context, clerkID string, reque
 		}
 	}
 
-	err = s.userRepo.CompleteOnboarding(ctx.Request().Context(), clerkID, request)
+	// Update user with onboarding data using PutUser
+	onboardingCompleted := true
+	updatedUser, err := s.userRepo.PutUser(ctx.Request().Context(), existingUser.ID.String(), &user.PutUserRequest{
+		TargetPtn:           request.TargetPtn,
+		TargetScore:         request.TargetScore,
+		ExamDate:            request.ExamDate,
+		StudyHoursPerWeek:   request.StudyHoursPerWeek,
+		OnboardingCompleted: &onboardingCompleted,
+	})
 	if err != nil {
 		logger.Error().Err(err).Msg("failed to complete onboarding")
+		return nil, err
+	}
+
+	// Create initial readiness data for all sections
+	_, err = s.readinessRepo.CreateInitialReadiness(ctx.Request().Context(), updatedUser.ID)
+	if err != nil {
+		logger.Error().Err(err).Msg("failed to create initial readiness")
 		return nil, err
 	}
 
 	logger.Info().
 		Str("event", "onboarding_completed").
 		Str("clerk_id", clerkID).
+		Str("user_id", updatedUser.ID.String()).
 		Msg("Onboarding completed successfully")
 
 	return &user.CompleteOnboardingResponse{
-		TargetPtn:         request.TargetPtn,
-		TargetScore:       request.TargetScore,
-		ExamDate:          request.ExamDate,
-		StudyHoursPerWeek: request.StudyHoursPerWeek,
+		ID:                  updatedUser.ID,
+		OnboardingCompleted: updatedUser.OnboardingCompleted,
+		TargetPtn:           updatedUser.TargetPtn,
+		TargetScore:         updatedUser.TargetScore,
+		ExamDate:            updatedUser.ExamDate,
+		StudyHoursPerWeek:   updatedUser.StudyHoursPerWeek,
+		InitialReadiness:    readiness.NewDefaultInitialReadiness(),
 	}, nil
 }

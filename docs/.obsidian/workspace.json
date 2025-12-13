@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "BACKLOG_AND_SPRINTS.md",
+                "file": "backend/API_DOCUMENTATION.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "BACKLOG_AND_SPRINTS"
+              "title": "API_DOCUMENTATION"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "BACKLOG_AND_SPRINTS.md",
+                "file": "backend/API_DOCUMENTATION.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for BACKLOG_AND_SPRINTS"
+              "title": "Backlinks for API_DOCUMENTATION"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "BACKLOG_AND_SPRINTS.md",
+                "file": "backend/API_DOCUMENTATION.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from BACKLOG_AND_SPRINTS"
+              "title": "Outgoing links from API_DOCUMENTATION"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "BACKLOG_AND_SPRINTS.md",
+                "file": "backend/API_DOCUMENTATION.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of BACKLOG_AND_SPRINTS"
+              "title": "Outline of API_DOCUMENTATION"
             }
           }
         ]
@@ -184,9 +184,5 @@
     }
   },
   "active": "0fe40761b617dd7a",
-  "lastOpenFiles": [
-    "PRD.md",
-    "BACKLOG_AND_SPRINTS.md",
-    "ADDING_NEW_RESOURCE.md"
-  ]
+  "lastOpenFiles": ["BACKLOG_AND_SPRINTS.md", "PRD.md", "ADDING_NEW_RESOURCE.md"]
 }

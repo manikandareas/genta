@@ -52,6 +52,11 @@ func (r *UserRepository) PutUser(ctx context.Context, userID string, request *us
 		args["study_hours_per_week"] = *request.StudyHoursPerWeek
 	}
 
+	if request.OnboardingCompleted != nil {
+		setClauses = append(setClauses, "onboarding_completed = @onboarding_completed")
+		args["onboarding_completed"] = *request.OnboardingCompleted
+	}
+
 	stmt := "UPDATE users SET " + strings.Join(setClauses, ", ") + " WHERE id = @id AND deleted_at IS NULL RETURNING *"
 
 	rows, err := r.server.DB.Pool.Query(ctx, stmt, args)
@@ -144,47 +149,6 @@ func (r *UserRepository) DeleteUser(ctx context.Context, userID string) error {
 	stmt := "UPDATE users SET deleted_at = NOW() WHERE id = @id AND deleted_at IS NULL"
 
 	result, err := r.server.DB.Pool.Exec(ctx, stmt, pgx.NamedArgs{"id": userID})
-	if err != nil {
-		return fmt.Errorf("failed to execute query: %w", err)
-	}
-
-	if result.RowsAffected() == 0 {
-		return errs.NewNotFoundError("user not found", false, nil)
-	}
-
-	return nil
-}
-
-func (r *UserRepository) CompleteOnboarding(ctx context.Context, clerkID string, request *user.CompleteOnboardingRequest) error {
-	args := pgx.NamedArgs{
-		"clerk_id": clerkID,
-	}
-
-	setClauses := []string{"onboarding_completed = true", "updated_at = NOW()"}
-
-	if request.TargetPtn != nil {
-		setClauses = append(setClauses, "target_ptn = @target_ptn")
-		args["target_ptn"] = *request.TargetPtn
-	}
-
-	if request.TargetScore != nil {
-		setClauses = append(setClauses, "target_score = @target_score")
-		args["target_score"] = *request.TargetScore
-	}
-
-	if request.ExamDate != nil {
-		setClauses = append(setClauses, "exam_date = @exam_date")
-		args["exam_date"] = *request.ExamDate
-	}
-
-	if request.StudyHoursPerWeek != nil {
-		setClauses = append(setClauses, "study_hours_per_week = @study_hours_per_week")
-		args["study_hours_per_week"] = *request.StudyHoursPerWeek
-	}
-
-	stmt := "UPDATE users SET " + strings.Join(setClauses, ", ") + " WHERE clerk_id = @clerk_id AND deleted_at IS NULL"
-
-	result, err := r.server.DB.Pool.Exec(ctx, stmt, args)
 	if err != nil {
 		return fmt.Errorf("failed to execute query: %w", err)
 	}

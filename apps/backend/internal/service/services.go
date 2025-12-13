@@ -23,7 +23,7 @@ func NewServices(s *server.Server, repos *repository.Repositories) (*Services, e
 		return nil, fmt.Errorf("failed to create Clerk client: %w", err)
 	}
 
-	userService := NewUserService(s, repos.User, clerkClient)
+	userService := NewUserService(s, repos.User, repos.Readiness, clerkClient)
 
 	return &Services{
 		Job:  s.Job,
