@@ -47,7 +47,7 @@ func TestUserIntegration_UpdateUser_Success(t *testing.T) {
 
 	// Setup repository, service, and handler
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	// Create Echo instance and request
@@ -69,8 +69,8 @@ func TestUserIntegration_UpdateUser_Success(t *testing.T) {
 
 	c := e.NewContext(req, rec)
 
-	// Set user_id in context (simulating auth middleware)
-	c.Set("user_id", testUserID.String())
+	// Set user_id in context (simulating auth middleware) - uses clerkID
+	c.Set("user_id", clerkID)
 
 	// Set logger in context
 	logger := zerolog.Nop()
@@ -135,7 +135,7 @@ func TestUserIntegration_UpdateUser_PartialUpdate(t *testing.T) {
 	require.NoError(t, err)
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -151,7 +151,7 @@ func TestUserIntegration_UpdateUser_PartialUpdate(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	c.Set("user_id", testUserID.String())
+	c.Set("user_id", clerkID) // uses clerkID
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -185,7 +185,7 @@ func TestUserIntegration_UpdateUser_NotFound(t *testing.T) {
 	defer cleanup()
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -200,8 +200,8 @@ func TestUserIntegration_UpdateUser_NotFound(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	// Use non-existent user ID
-	c.Set("user_id", uuid.New().String())
+	// Use non-existent clerk ID
+	c.Set("user_id", "clerk_nonexistent_"+uuid.New().String()[:8])
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -233,7 +233,7 @@ func TestUserIntegration_UpdateUser_WithExamDate(t *testing.T) {
 	require.NoError(t, err)
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -253,7 +253,7 @@ func TestUserIntegration_UpdateUser_WithExamDate(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	c.Set("user_id", testUserID.String())
+	c.Set("user_id", clerkID) // uses clerkID
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -296,7 +296,7 @@ func TestUserIntegration_UpdateUser_ValidationError(t *testing.T) {
 	require.NoError(t, err)
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -312,7 +312,7 @@ func TestUserIntegration_UpdateUser_ValidationError(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	c.Set("user_id", testUserID.String())
+	c.Set("user_id", clerkID) // uses clerkID
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -345,7 +345,7 @@ func TestUserIntegration_UpdateUser_EmptyRequest(t *testing.T) {
 	require.NoError(t, err)
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -359,7 +359,7 @@ func TestUserIntegration_UpdateUser_EmptyRequest(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	c.Set("user_id", testUserID.String())
+	c.Set("user_id", clerkID) // uses clerkID
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -406,7 +406,7 @@ func TestUserIntegration_GetUser_Success(t *testing.T) {
 
 	// Setup repository, service, and handler
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	// Create Echo instance and request
@@ -417,8 +417,8 @@ func TestUserIntegration_GetUser_Success(t *testing.T) {
 
 	c := e.NewContext(req, rec)
 
-	// Set user_id in context (simulating auth middleware)
-	c.Set("user_id", testUserID.String())
+	// Set user_id in context (simulating auth middleware) - uses clerkID
+	c.Set("user_id", clerkID)
 
 	// Set logger in context
 	logger := zerolog.Nop()
@@ -457,7 +457,7 @@ func TestUserIntegration_GetUser_NotFound(t *testing.T) {
 	defer cleanup()
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -466,8 +466,8 @@ func TestUserIntegration_GetUser_NotFound(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	// Use non-existent user ID
-	c.Set("user_id", uuid.New().String())
+	// Use non-existent clerk ID
+	c.Set("user_id", "clerk_nonexistent_"+uuid.New().String()[:8])
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -500,7 +500,7 @@ func TestUserIntegration_GetUser_DeletedUser(t *testing.T) {
 	require.NoError(t, err)
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -509,7 +509,7 @@ func TestUserIntegration_GetUser_DeletedUser(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	c.Set("user_id", testUserID.String())
+	c.Set("user_id", clerkID) // uses clerkID
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -560,7 +560,7 @@ func TestUserIntegration_GetUser_WithAllFields(t *testing.T) {
 	require.NoError(t, err)
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -569,7 +569,7 @@ func TestUserIntegration_GetUser_WithAllFields(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	c.Set("user_id", testUserID.String())
+	c.Set("user_id", clerkID) // uses clerkID
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -622,7 +622,7 @@ func TestUserIntegration_GetUser_MinimalFields(t *testing.T) {
 	require.NoError(t, err)
 
 	userRepo := repository.NewUserRepository(testServer)
-	userService := service.NewUserService(testServer, userRepo)
+	userService := service.NewUserService(testServer, userRepo, nil)
 	userHandler := NewUserHandler(testServer, userService)
 
 	e := echo.New()
@@ -631,7 +631,7 @@ func TestUserIntegration_GetUser_MinimalFields(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	c := e.NewContext(req, rec)
-	c.Set("user_id", testUserID.String())
+	c.Set("user_id", clerkID) // uses clerkID
 	logger := zerolog.Nop()
 	c.Set("logger", &logger)
 
@@ -658,4 +658,380 @@ func TestUserIntegration_GetUser_MinimalFields(t *testing.T) {
 	assert.Nil(t, response.ExamDate)
 	assert.Nil(t, response.StudyHoursPerWeek)
 	// Note: IrtTheta and IrtVariance may have default values from database
+}
+
+// ==================== CompleteOnboarding Integration Tests ====================
+
+// TestUserIntegration_CompleteOnboarding_Success tests the full flow of completing onboarding
+func TestUserIntegration_CompleteOnboarding_Success(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	// Create a test user in the database
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "test_" + uuid.New().String()[:8] + "@example.com"
+
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, subscription_tier, is_active, onboarding_completed, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+	`, testUserID, clerkID, email, "free", true, false)
+	require.NoError(t, err, "failed to create test user")
+
+	// Setup repository, service, and handler
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo, nil)
+	userHandler := NewUserHandler(testServer, userService)
+
+	// Create Echo instance and request
+	e := echo.New()
+
+	// Prepare onboarding request body
+	examDate := time.Date(2026, 3, 15, 0, 0, 0, 0, time.UTC)
+	onboardingRequest := map[string]interface{}{
+		"targetPtn":         "UI",
+		"targetScore":       700,
+		"examDate":          examDate.Format(time.RFC3339),
+		"studyHoursPerWeek": 10,
+	}
+	jsonBody, err := json.Marshal(onboardingRequest)
+	require.NoError(t, err)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/me/onboarding", bytes.NewReader(jsonBody))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	// Set user_id in context (simulating auth middleware) - uses clerkID
+	c.Set("user_id", clerkID)
+
+	// Set logger in context
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	// Execute handler
+	err = userHandler.CompleteOnboarding(c)
+	require.NoError(t, err, "handler should not return error")
+
+	// Assert response status
+	assert.Equal(t, http.StatusOK, rec.Code, "should return 200 OK")
+
+	// Parse response body
+	var response user.CompleteOnboardingResponse
+	err = json.Unmarshal(rec.Body.Bytes(), &response)
+	require.NoError(t, err, "should be able to parse response")
+
+	// Assert response data
+	assert.Equal(t, "UI", *response.TargetPtn, "target PTN should match")
+	assert.Equal(t, 700, *response.TargetScore, "target score should match")
+	assert.Equal(t, int16(10), *response.StudyHoursPerWeek, "study hours should match")
+
+	// Verify data was persisted in database
+	var dbUser struct {
+		TargetPtn           *string
+		TargetScore         *int
+		StudyHoursPerWeek   *int16
+		OnboardingCompleted bool
+	}
+	err = testDB.Pool.QueryRow(ctx, `
+		SELECT target_ptn, target_score, study_hours_per_week, onboarding_completed
+		FROM users WHERE id = $1
+	`, testUserID).Scan(&dbUser.TargetPtn, &dbUser.TargetScore, &dbUser.StudyHoursPerWeek, &dbUser.OnboardingCompleted)
+	require.NoError(t, err, "should be able to query updated user")
+
+	assert.Equal(t, "UI", *dbUser.TargetPtn, "database should have updated target PTN")
+	assert.Equal(t, 700, *dbUser.TargetScore, "database should have updated target score")
+	assert.Equal(t, int16(10), *dbUser.StudyHoursPerWeek, "database should have updated study hours")
+	assert.True(t, dbUser.OnboardingCompleted, "onboarding should be marked as completed")
+}
+
+// TestUserIntegration_CompleteOnboarding_PartialData tests completing onboarding with partial data
+func TestUserIntegration_CompleteOnboarding_PartialData(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "test_" + uuid.New().String()[:8] + "@example.com"
+
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, subscription_tier, is_active, onboarding_completed, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+	`, testUserID, clerkID, email, "free", true, false)
+	require.NoError(t, err)
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo, nil)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	// Only provide targetPtn
+	onboardingRequest := map[string]interface{}{
+		"targetPtn": "ITB",
+	}
+	jsonBody, _ := json.Marshal(onboardingRequest)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/me/onboarding", bytes.NewReader(jsonBody))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	c.Set("user_id", clerkID) // uses clerkID
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err = userHandler.CompleteOnboarding(c)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	// Verify onboarding is completed even with partial data
+	var onboardingCompleted bool
+	err = testDB.Pool.QueryRow(ctx, `
+		SELECT onboarding_completed FROM users WHERE id = $1
+	`, testUserID).Scan(&onboardingCompleted)
+	require.NoError(t, err)
+
+	assert.True(t, onboardingCompleted, "onboarding should be marked as completed")
+}
+
+// TestUserIntegration_CompleteOnboarding_EmptyRequest tests completing onboarding with empty request
+func TestUserIntegration_CompleteOnboarding_EmptyRequest(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "test_" + uuid.New().String()[:8] + "@example.com"
+
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, subscription_tier, is_active, onboarding_completed, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+	`, testUserID, clerkID, email, "free", true, false)
+	require.NoError(t, err)
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo, nil)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	// Empty request body
+	onboardingRequest := map[string]interface{}{}
+	jsonBody, _ := json.Marshal(onboardingRequest)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/me/onboarding", bytes.NewReader(jsonBody))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	c.Set("user_id", clerkID) // uses clerkID
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err = userHandler.CompleteOnboarding(c)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	// Verify onboarding is completed even with empty request
+	var onboardingCompleted bool
+	err = testDB.Pool.QueryRow(ctx, `
+		SELECT onboarding_completed FROM users WHERE id = $1
+	`, testUserID).Scan(&onboardingCompleted)
+	require.NoError(t, err)
+
+	assert.True(t, onboardingCompleted, "onboarding should be marked as completed")
+}
+
+// TestUserIntegration_CompleteOnboarding_ValidationError tests validation errors
+func TestUserIntegration_CompleteOnboarding_ValidationError(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "test_" + uuid.New().String()[:8] + "@example.com"
+
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, subscription_tier, is_active, onboarding_completed, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+	`, testUserID, clerkID, email, "free", true, false)
+	require.NoError(t, err)
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo, nil)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	// Invalid request - study hours exceeds max (168)
+	onboardingRequest := map[string]interface{}{
+		"studyHoursPerWeek": 200,
+	}
+	jsonBody, _ := json.Marshal(onboardingRequest)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/me/onboarding", bytes.NewReader(jsonBody))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	c.Set("user_id", clerkID) // uses clerkID
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err = userHandler.CompleteOnboarding(c)
+
+	// Should return validation error
+	assert.Error(t, err, "should return validation error for invalid study hours")
+}
+
+// TestUserIntegration_CompleteOnboarding_WithExamDate tests completing onboarding with exam date
+func TestUserIntegration_CompleteOnboarding_WithExamDate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "test_" + uuid.New().String()[:8] + "@example.com"
+
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, subscription_tier, is_active, onboarding_completed, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+	`, testUserID, clerkID, email, "free", true, false)
+	require.NoError(t, err)
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo, nil)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	// Update with exam date
+	examDate := time.Date(2026, 6, 15, 0, 0, 0, 0, time.UTC)
+	onboardingRequest := map[string]interface{}{
+		"targetPtn":   "UGM",
+		"targetScore": 680,
+		"examDate":    examDate.Format(time.RFC3339),
+	}
+	jsonBody, _ := json.Marshal(onboardingRequest)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/me/onboarding", bytes.NewReader(jsonBody))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	c.Set("user_id", clerkID) // uses clerkID
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err = userHandler.CompleteOnboarding(c)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	// Verify exam date was saved
+	var dbExamDate *time.Time
+	err = testDB.Pool.QueryRow(ctx, `
+		SELECT exam_date FROM users WHERE id = $1
+	`, testUserID).Scan(&dbExamDate)
+	require.NoError(t, err)
+
+	require.NotNil(t, dbExamDate, "exam date should be set")
+	assert.Equal(t, 2026, dbExamDate.Year(), "exam year should match")
+	assert.Equal(t, time.June, dbExamDate.Month(), "exam month should match")
+	assert.Equal(t, 15, dbExamDate.Day(), "exam day should match")
+}
+
+// TestUserIntegration_CompleteOnboarding_AlreadyCompleted tests completing onboarding when already completed
+func TestUserIntegration_CompleteOnboarding_AlreadyCompleted(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	testDB, testServer, cleanup := testingPkg.SetupTest(t)
+	defer cleanup()
+
+	ctx := context.Background()
+
+	testUserID := uuid.New()
+	clerkID := "clerk_test_" + uuid.New().String()[:8]
+	email := "test_" + uuid.New().String()[:8] + "@example.com"
+	initialPtn := "ITB"
+	initialScore := 650
+
+	// Create user with onboarding already completed
+	_, err := testDB.Pool.Exec(ctx, `
+		INSERT INTO users (id, clerk_id, email, target_ptn, target_score, subscription_tier, is_active, onboarding_completed, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
+	`, testUserID, clerkID, email, initialPtn, initialScore, "free", true, true)
+	require.NoError(t, err)
+
+	userRepo := repository.NewUserRepository(testServer)
+	userService := service.NewUserService(testServer, userRepo, nil)
+	userHandler := NewUserHandler(testServer, userService)
+
+	e := echo.New()
+
+	// Try to complete onboarding again with different data
+	onboardingRequest := map[string]interface{}{
+		"targetPtn":   "UI",
+		"targetScore": 700,
+	}
+	jsonBody, _ := json.Marshal(onboardingRequest)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/me/onboarding", bytes.NewReader(jsonBody))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+	c.Set("user_id", clerkID) // uses clerkID
+	logger := zerolog.Nop()
+	c.Set("logger", &logger)
+
+	err = userHandler.CompleteOnboarding(c)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	// Verify data was updated (onboarding can be re-done)
+	var dbUser struct {
+		TargetPtn   *string
+		TargetScore *int
+	}
+	err = testDB.Pool.QueryRow(ctx, `
+		SELECT target_ptn, target_score FROM users WHERE id = $1
+	`, testUserID).Scan(&dbUser.TargetPtn, &dbUser.TargetScore)
+	require.NoError(t, err)
+
+	assert.Equal(t, "UI", *dbUser.TargetPtn, "target PTN should be updated")
+	assert.Equal(t, 700, *dbUser.TargetScore, "target score should be updated")
 }

@@ -14,4 +14,6 @@ func registerUserRoutes(r *echo.Group, h *handler.UserHandler, auth *middleware.
 	// me
 	users.GET("/me", h.GetUser)
 	users.PUT("/me", h.UpdateUser)
+
+	users.POST("/onboarding", h.CompleteOnboarding)
 }

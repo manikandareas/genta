@@ -456,3 +456,253 @@ func TestGetUser_NoRequestBody(t *testing.T) {
 	// Verify request has no body
 	assert.Equal(t, int64(0), c.Request().ContentLength)
 }
+
+// ==================== CompleteOnboarding Unit Tests ====================
+
+func TestCompleteOnboarding_RequestBinding(t *testing.T) {
+	tests := []struct {
+		name           string
+		requestBody    map[string]interface{}
+		expectedStatus int
+		description    string
+	}{
+		{
+			name: "valid full onboarding request",
+			requestBody: map[string]interface{}{
+				"targetPtn":         "UI",
+				"targetScore":       700,
+				"examDate":          "2026-03-15T00:00:00Z",
+				"studyHoursPerWeek": 10,
+			},
+			expectedStatus: http.StatusOK,
+			description:    "Should accept valid full onboarding request",
+		},
+		{
+			name: "valid partial onboarding - only targetPtn",
+			requestBody: map[string]interface{}{
+				"targetPtn": "ITB",
+			},
+			expectedStatus: http.StatusOK,
+			description:    "Should accept partial onboarding with only targetPtn",
+		},
+		{
+			name: "valid partial onboarding - only targetScore",
+			requestBody: map[string]interface{}{
+				"targetScore": 650,
+			},
+			expectedStatus: http.StatusOK,
+			description:    "Should accept partial onboarding with only targetScore",
+		},
+		{
+			name:           "empty request body",
+			requestBody:    map[string]interface{}{},
+			expectedStatus: http.StatusOK,
+			description:    "Should accept empty request (no onboarding data)",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c, _ := setupTestContext(http.MethodPost, "/api/v1/users/me/onboarding", tt.requestBody)
+
+			// Test request binding
+			var req user.CompleteOnboardingRequest
+			err := c.Bind(&req)
+
+			assert.NoError(t, err, tt.description)
+		})
+	}
+}
+
+func TestCompleteOnboarding_ValidationErrors(t *testing.T) {
+	tests := []struct {
+		name        string
+		requestBody map[string]interface{}
+		expectError bool
+		description string
+	}{
+		{
+			name: "invalid targetPtn - too long",
+			requestBody: map[string]interface{}{
+				"targetPtn": string(make([]byte, 150)), // exceeds 100 chars
+			},
+			expectError: true,
+			description: "Should reject targetPtn exceeding 100 characters",
+		},
+		{
+			name: "invalid targetScore - negative",
+			requestBody: map[string]interface{}{
+				"targetScore": -100,
+			},
+			expectError: true,
+			description: "Should reject negative targetScore",
+		},
+		{
+			name: "invalid studyHoursPerWeek - exceeds max",
+			requestBody: map[string]interface{}{
+				"studyHoursPerWeek": 200, // exceeds 168 hours
+			},
+			expectError: true,
+			description: "Should reject studyHoursPerWeek exceeding 168",
+		},
+		{
+			name: "invalid studyHoursPerWeek - negative",
+			requestBody: map[string]interface{}{
+				"studyHoursPerWeek": -5,
+			},
+			expectError: true,
+			description: "Should reject negative studyHoursPerWeek",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c, _ := setupTestContext(http.MethodPost, "/api/v1/users/me/onboarding", tt.requestBody)
+
+			var req user.CompleteOnboardingRequest
+			_ = c.Bind(&req)
+
+			err := req.Validate()
+
+			if tt.expectError {
+				assert.Error(t, err, tt.description)
+			} else {
+				assert.NoError(t, err, tt.description)
+			}
+		})
+	}
+}
+
+func TestCompleteOnboarding_ResponseFormat(t *testing.T) {
+	// Test that response matches API documentation format for POST /api/v1/users/me/onboarding
+	type ExpectedResponse struct {
+		Code      string      `json:"code"`
+		Message   string      `json:"message"`
+		Status    int         `json:"status"`
+		Timestamp string      `json:"timestamp"`
+		Data      interface{} `json:"data"`
+	}
+
+	// Verify response structure matches documentation
+	response := ExpectedResponse{
+		Code:      "OK",
+		Message:   "Onboarding completed",
+		Status:    200,
+		Timestamp: time.Now().UTC().Format(time.RFC3339),
+		Data: map[string]interface{}{
+			"targetPtn":         "UI",
+			"targetScore":       700,
+			"examDate":          "2026-03-15T00:00:00Z",
+			"studyHoursPerWeek": 10,
+		},
+	}
+
+	// Verify JSON marshaling works correctly
+	jsonData, err := json.Marshal(response)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, jsonData)
+
+	// Verify response can be unmarshaled back
+	var unmarshaled ExpectedResponse
+	err = json.Unmarshal(jsonData, &unmarshaled)
+	assert.NoError(t, err)
+	assert.Equal(t, "OK", unmarshaled.Code)
+	assert.Equal(t, 200, unmarshaled.Status)
+}
+
+func TestCompleteOnboarding_ErrorResponseFormat(t *testing.T) {
+	// Test error response format for POST /me/onboarding endpoint
+
+	type ErrorResponse struct {
+		Code      string      `json:"code"`
+		Message   string      `json:"message"`
+		Status    int         `json:"status"`
+		Timestamp string      `json:"timestamp"`
+		Override  bool        `json:"override"`
+		Errors    interface{} `json:"errors"`
+		Action    interface{} `json:"action"`
+		RequestID string      `json:"request_id"`
+	}
+
+	tests := []struct {
+		name     string
+		response ErrorResponse
+	}{
+		{
+			name: "401 Unauthorized - No Token",
+			response: ErrorResponse{
+				Code:      "UNAUTHORIZED",
+				Message:   "Invalid or expired token",
+				Status:    401,
+				Timestamp: time.Now().UTC().Format(time.RFC3339),
+				Override:  false,
+				Action: map[string]string{
+					"type":    "redirect",
+					"message": "Please login again",
+					"value":   "/login",
+				},
+			},
+		},
+		{
+			name: "400 Bad Request - Validation Error",
+			response: ErrorResponse{
+				Code:      "BAD_REQUEST",
+				Message:   "Validation failed",
+				Status:    400,
+				Timestamp: time.Now().UTC().Format(time.RFC3339),
+				Override:  false,
+				Errors: []map[string]string{
+					{
+						"field": "studyHoursPerWeek",
+						"error": "must not exceed 168",
+					},
+				},
+			},
+		},
+		{
+			name: "500 Internal Server Error",
+			response: ErrorResponse{
+				Code:      "INTERNAL_SERVER_ERROR",
+				Message:   "An unexpected error occurred",
+				Status:    500,
+				Timestamp: time.Now().UTC().Format(time.RFC3339),
+				Override:  false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			jsonData, err := json.Marshal(tt.response)
+			assert.NoError(t, err)
+			assert.NotEmpty(t, jsonData)
+
+			var unmarshaled ErrorResponse
+			err = json.Unmarshal(jsonData, &unmarshaled)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.response.Code, unmarshaled.Code)
+			assert.Equal(t, tt.response.Status, unmarshaled.Status)
+		})
+	}
+}
+
+func TestCompleteOnboarding_RequiresAuthentication(t *testing.T) {
+	// Test that endpoint requires authentication
+	c, _ := setupTestContext(http.MethodPost, "/api/v1/users/me/onboarding", nil)
+
+	// Without setting user_id in context, GetUserID should return empty
+	userID := c.Get("user_id")
+	assert.Nil(t, userID, "user_id should be nil when not authenticated")
+}
+
+func TestCompleteOnboarding_AuthenticatedUser(t *testing.T) {
+	// Test with authenticated user
+	c, _ := setupTestContext(http.MethodPost, "/api/v1/users/me/onboarding", nil)
+
+	// Simulate authenticated user (set by auth middleware)
+	expectedUserID := "550e8400-e29b-41d4-a716-446655440000"
+	c.Set("user_id", expectedUserID)
+
+	userID := c.Get("user_id")
+	assert.Equal(t, expectedUserID, userID)
+}

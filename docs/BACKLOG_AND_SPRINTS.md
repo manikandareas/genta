@@ -63,18 +63,18 @@
 
 | ID     | Story                                   | Priority | SP  | Sprint | Status |
 | ------ | --------------------------------------- | -------- | --- | ------ | ------ |
-| BE-001 | Setup Go project dengan Echo framework  | 🔴 P0    | 2   | 1      | ✅      |
-| BE-002 | Setup PostgreSQL dengan pgx driver      | 🔴 P0    | 2   | 1      | ✅      |
-| BE-003 | Setup Redis untuk caching & session     | 🔴 P0    | 2   | 1      | ✅      |
-| BE-004 | Setup Asynq untuk job queue             | 🔴 P0    | 2   | 1      | ✅      |
+| BE-001 | Setup Go project dengan Echo framework  | 🔴 P0    | 2   | 1      | ✅     |
+| BE-002 | Setup PostgreSQL dengan pgx driver      | 🔴 P0    | 2   | 1      | ✅     |
+| BE-003 | Setup Redis untuk caching & session     | 🔴 P0    | 2   | 1      | ✅     |
+| BE-004 | Setup Asynq untuk job queue             | 🔴 P0    | 2   | 1      | ✅     |
 | BE-005 | Setup sqlc untuk type-safe SQL          | 🔴 P0    | 2   | 1      | -      |
-| BE-006 | Setup database migrations (tern/goose)  | 🔴 P0    | 2   | 1      | ✅      |
-| BE-007 | Setup environment config & validation   | 🔴 P0    | 1   | 1      | ✅      |
-| BE-008 | Setup logging & error handling          | 🔴 P0    | 2   | 1      | ✅      |
-| BE-009 | Setup CI/CD pipeline (GitHub Actions)   | 🟠 P1    | 3   | 1      | ⬜      |
-| BE-010 | Setup New Relic monitoring              | 🟠 P1    | 2   | 1      | ✅      |
-| BE-011 | Setup Docker & docker-compose           | 🟠 P1    | 2   | 1      | ✅      |
-| BE-012 | Create base response & error structures | 🔴 P0    | 2   | 1      | ✅      |
+| BE-006 | Setup database migrations (tern/goose)  | 🔴 P0    | 2   | 1      | ✅     |
+| BE-007 | Setup environment config & validation   | 🔴 P0    | 1   | 1      | ✅     |
+| BE-008 | Setup logging & error handling          | 🔴 P0    | 2   | 1      | ✅     |
+| BE-009 | Setup CI/CD pipeline (GitHub Actions)   | 🟠 P1    | 3   | 1      | ⬜     |
+| BE-010 | Setup New Relic monitoring              | 🟠 P1    | 2   | 1      | ✅     |
+| BE-011 | Setup Docker & docker-compose           | 🟠 P1    | 2   | 1      | ✅     |
+| BE-012 | Create base response & error structures | 🔴 P0    | 2   | 1      | ✅     |
 
 ---
 
@@ -82,16 +82,16 @@
 
 | ID     | Story                                                 | Priority | SP  | Sprint | Status |
 | ------ | ----------------------------------------------------- | -------- | --- | ------ | ------ |
-| BE-013 | Integrate Clerk JWT validation middleware             | 🔴 P0    | 3   | 2      | ✅      |
-| BE-014 | Create users table migration                          | 🔴 P0    | 2   | 2      | ✅      |
-| BE-015 | Implement user repository (CRUD)                      | 🔴 P0    | 3   | 2      | ⬜      |
-| BE-016 | Implement user service layer                          | 🔴 P0    | 2   | 2      | ⬜      |
-| BE-017 | `GET /api/v1/auth/me` - Get current user              | 🔴 P0    | 2   | 2      | ✅      |
-| BE-018 | `PUT /api/v1/users/me` - Update user profile          | 🔴 P0    | 2   | 2      | ✅      |
-| BE-019 | `POST /api/v1/users/onboarding` - Complete onboarding | 🔴 P0    | 3   | 2      | ⬜      |
-| BE-020 | Clerk webhook handler (user.created, user.updated)    | 🟠 P1    | 3   | 2      | ⬜      |
-| BE-021 | User session management dengan Redis                  | 🟠 P1    | 2   | 2      | ⬜      |
-| BE-022 | Rate limiting middleware                              | 🟠 P1    | 2   | 2      | ✅      |
+| BE-013 | Integrate Clerk JWT validation middleware             | 🔴 P0    | 3   | 2      | ✅     |
+| BE-014 | Create users table migration                          | 🔴 P0    | 2   | 2      | ✅     |
+| BE-015 | Implement user repository (CRUD)                      | 🔴 P0    | 3   | 2      | ⬜     |
+| BE-016 | Implement user service layer                          | 🔴 P0    | 2   | 2      | ⬜     |
+| BE-017 | `GET /api/v1/auth/me` - Get current user              | 🔴 P0    | 2   | 2      | ✅     |
+| BE-018 | `PUT /api/v1/users/me` - Update user profile          | 🔴 P0    | 2   | 2      | ✅     |
+| BE-019 | `POST /api/v1/users/onboarding` - Complete onboarding | 🔴 P0    | 3   | 2      | ⬜     |
+| BE-020 | Clerk webhook handler (user.created, user.updated)    | 🟠 P1    | 3   | 2      | ⬜     |
+| BE-021 | User session management dengan Redis                  | 🟠 P1    | 2   | 2      | -      |
+| BE-022 | Rate limiting middleware                              | 🟠 P1    | 2   | 2      | ✅     |
 
 ---
 

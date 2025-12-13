@@ -46,3 +46,15 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 		validation.EmptyRequest{},
 	)(c)
 }
+
+func (h *UserHandler) CompleteOnboarding(c echo.Context) error {
+	return Handle(
+		h.Handler,
+		func(c echo.Context, request *user.CompleteOnboardingRequest) (*user.CompleteOnboardingResponse, error) {
+			userID := middleware.GetUserID(c)
+			return h.userService.CompleteOnboarding(c, userID, request)
+		},
+		http.StatusOK,
+		&user.CompleteOnboardingRequest{},
+	)(c)
+}
