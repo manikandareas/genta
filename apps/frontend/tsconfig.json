@@ -19,7 +19,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@genta/openapi": ["../../packages/openapi/dist"],
+      "@genta/openapi/*": ["../../packages/openapi/dist/*"],
+      "@genta/zod": ["../../packages/zod/dist"],
+      "@genta/zod/*": ["../../packages/zod/dist/*"]
     }
   },
   "include": [
