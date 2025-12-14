@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
+import { Geist, Geist_Mono, DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import {
   ClerkProvider,
@@ -11,6 +11,11 @@ import {
 } from "@clerk/nextjs";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
+
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair-display",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={dmSans.variable}>
+      <html lang="en" className={`${dmSans.variable} ${playfairDisplay.variable}`}>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           {children}
         </body>
