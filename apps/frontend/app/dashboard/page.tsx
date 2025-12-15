@@ -4,8 +4,9 @@ import { motion } from "motion/react";
 import {
   Navbar,
   WelcomeHeader,
-  CountdownBanner,
+  TryoutCtaBanner,
   StatsActivityCard,
+  QuickActions,
   mockDashboardData,
 } from "@/features/dashboard";
 
@@ -39,7 +40,7 @@ export default function DashboardPage() {
       <Navbar user={data.user} notifications={data.notifications} />
 
       <motion.main
-        className="container mx-auto max-w-6xl space-y-12 px-4 py-12"
+        className="container mx-auto max-w-6xl space-y-6 px-4 py-12"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -49,10 +50,9 @@ export default function DashboardPage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <CountdownBanner countdown={data.countdown} />
+          <QuickActions />
         </motion.div>
 
-        {/* Stats + Activity Heatmap Combined Card */}
         <motion.div variants={itemVariants}>
           <StatsActivityCard
             tps={data.readiness.tps}
@@ -60,6 +60,10 @@ export default function DashboardPage() {
             overall={data.readiness.overall}
             activity={data.activity}
           />
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <TryoutCtaBanner countdown={data.countdown} />
         </motion.div>
       </motion.main>
     </div>

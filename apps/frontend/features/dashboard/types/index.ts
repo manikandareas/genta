@@ -23,22 +23,29 @@ export interface CountdownData {
   target_score: number;
 }
 
+export interface SubtestReadiness {
+  percentage: number;
+  predicted_score_low: number;
+  predicted_score_high: number;
+  days_to_ready: number | null;
+}
+
 export interface TPSReadiness {
   overall_percentage: number;
   subtests: {
-    PU: number;
-    PPU: number;
-    PBM: number;
-    PK: number;
+    PU: SubtestReadiness;
+    PPU: SubtestReadiness;
+    PBM: SubtestReadiness;
+    PK: SubtestReadiness;
   };
 }
 
 export interface LiterasiReadiness {
   overall_percentage: number;
   subtests: {
-    LBI: number;
-    LBE: number;
-    PM: number;
+    LBI: SubtestReadiness;
+    LBE: SubtestReadiness;
+    PM: SubtestReadiness;
   };
 }
 
@@ -57,8 +64,11 @@ export interface HeatmapEntry {
 
 export interface ActivityStats {
   total_sessions: number;
+  total_questions: number;
   avg_per_day: number;
   active_days: number;
+  overall_accuracy: number;
+  accuracy_change: number; // weekly change
 }
 
 export interface ActivityData {

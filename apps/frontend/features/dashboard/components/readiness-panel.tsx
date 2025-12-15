@@ -9,7 +9,9 @@ import {
   ChartLineData03Icon,
   ArrowUp01Icon,
   ArrowDown01Icon,
+  ArrowRight01Icon,
 } from "@hugeicons/core-free-icons";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import NumberFlow from "@number-flow/react";
 import type { TPSReadiness, LiterasiReadiness, OverallReadiness } from "../types";
@@ -56,32 +58,50 @@ export function ReadinessPanel({ tps, literasi, overall }: ReadinessPanelProps) 
           {/* Stats */}
           <div className="flex flex-1 flex-col gap-2">
             {/* TPS */}
-            <div className="flex flex-1 items-center justify-between rounded-lg bg-muted/30 px-3 py-2">
+            <Link
+              href="/practice?section=tps"
+              className="group flex flex-1 items-center justify-between rounded-lg bg-muted/30 px-3 py-2 transition-colors hover:bg-muted/50"
+            >
               <div className="flex items-center gap-2">
                 <div className="flex size-7 items-center justify-center rounded-md bg-violet-500/10">
                   <HugeiconsIcon icon={BrainIcon} className="size-4 text-violet-500" />
                 </div>
                 <span className="text-xs font-medium">TPS</span>
               </div>
-              <div className="flex items-baseline">
-                <NumberFlow value={tps.overall_percentage} className="text-xl font-bold" />
-                <span className="text-xs text-muted-foreground">%</span>
+              <div className="flex items-center gap-2">
+                <div className="flex items-baseline">
+                  <NumberFlow value={tps.overall_percentage} className="text-xl font-bold" />
+                  <span className="text-xs text-muted-foreground">%</span>
+                </div>
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                />
               </div>
-            </div>
+            </Link>
 
             {/* Literasi */}
-            <div className="flex flex-1 items-center justify-between rounded-lg bg-muted/30 px-3 py-2">
+            <Link
+              href="/practice?section=literasi"
+              className="group flex flex-1 items-center justify-between rounded-lg bg-muted/30 px-3 py-2 transition-colors hover:bg-muted/50"
+            >
               <div className="flex items-center gap-2">
                 <div className="flex size-7 items-center justify-center rounded-md bg-emerald-500/10">
                   <HugeiconsIcon icon={Book02Icon} className="size-4 text-emerald-500" />
                 </div>
                 <span className="text-xs font-medium">Literasi</span>
               </div>
-              <div className="flex items-baseline">
-                <NumberFlow value={literasi.overall_percentage} className="text-xl font-bold" />
-                <span className="text-xs text-muted-foreground">%</span>
+              <div className="flex items-center gap-2">
+                <div className="flex items-baseline">
+                  <NumberFlow value={literasi.overall_percentage} className="text-xl font-bold" />
+                  <span className="text-xs text-muted-foreground">%</span>
+                </div>
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                />
               </div>
-            </div>
+            </Link>
 
             {/* Prediksi */}
             <div className="flex flex-1 items-center justify-between rounded-lg bg-muted/30 px-3 py-2">

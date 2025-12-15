@@ -66,18 +66,53 @@ export const mockDashboardData: DashboardData = {
     tps: {
       overall_percentage: 78,
       subtests: {
-        PU: 80,
-        PPU: 75,
-        PBM: 78,
-        PK: 79,
+        PU: {
+          percentage: 80,
+          predicted_score_low: 680,
+          predicted_score_high: 720,
+          days_to_ready: null,
+        },
+        PPU: {
+          percentage: 75,
+          predicted_score_low: 640,
+          predicted_score_high: 680,
+          days_to_ready: 12,
+        },
+        PBM: {
+          percentage: 78,
+          predicted_score_low: 660,
+          predicted_score_high: 700,
+          days_to_ready: 8,
+        },
+        PK: {
+          percentage: 79,
+          predicted_score_low: 670,
+          predicted_score_high: 710,
+          days_to_ready: 5,
+        },
       },
     },
     literasi: {
       overall_percentage: 65,
       subtests: {
-        LBI: 70,
-        LBE: 60,
-        PM: 65,
+        LBI: {
+          percentage: 70,
+          predicted_score_low: 620,
+          predicted_score_high: 660,
+          days_to_ready: 15,
+        },
+        LBE: {
+          percentage: 60,
+          predicted_score_low: 580,
+          predicted_score_high: 620,
+          days_to_ready: 25,
+        },
+        PM: {
+          percentage: 65,
+          predicted_score_low: 600,
+          predicted_score_high: 640,
+          days_to_ready: 20,
+        },
       },
     },
     overall: {
@@ -92,8 +127,11 @@ export const mockDashboardData: DashboardData = {
     exam_date: "2025-05-12",
     stats: {
       total_sessions: 156,
+      total_questions: 1872,
       avg_per_day: 12,
       active_days: 45,
+      overall_accuracy: 72,
+      accuracy_change: 5.2,
     },
     selected_year: 2025,
   },

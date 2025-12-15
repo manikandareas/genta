@@ -26,7 +26,7 @@ export function CountdownBanner({ countdown }: CountdownBannerProps) {
 
   return (
     <motion.div
-      className="relative col-span-1 flex h-64 flex-col justify-between overflow-hidden rounded-xl p-6 text-primary-foreground md:col-span-2 lg:col-span-3"
+      className="relative col-span-1 flex h-64 flex-col justify-between overflow-hidden rounded-lg p-6 text-primary-foreground md:col-span-2 lg:col-span-3"
       style={{
         background:
           "linear-gradient(135deg, var(--primary) 0%, oklch(0.5 0.14 165) 50%, oklch(0.45 0.12 170) 100%)",
@@ -38,18 +38,13 @@ export function CountdownBanner({ countdown }: CountdownBannerProps) {
       <div className="pointer-events-none absolute -right-8 -top-8 size-32 rounded-full bg-white/10 blur-2xl" />
       <div className="pointer-events-none absolute -bottom-12 -left-12 size-40 rounded-full bg-white/5 blur-3xl" />
 
-      <div className="relative z-10 space-y-2">
-        <p className="text-xs font-medium uppercase tracking-widest text-primary-foreground/70">
-          Countdown UTBK
-        </p>
-        <div className="flex items-baseline gap-2">
-          <NumberFlow
-            value={countdown.days_remaining}
-            className="font-playfair-display text-6xl font-bold tracking-tighter"
-            format={{ useGrouping: false }}
-          />
-          <span className="text-lg font-medium text-primary-foreground/80">hari lagi</span>
-        </div>
+      <div className="flex items-baseline gap-2">
+        <NumberFlow
+          value={countdown.days_remaining}
+          className="font-playfair-display text-6xl font-bold tracking-tighter"
+          format={{ useGrouping: false }}
+        />
+        <span className="text-lg font-medium text-primary-foreground/80">hari lagi</span>
       </div>
 
       <div className="relative z-10 space-y-4">

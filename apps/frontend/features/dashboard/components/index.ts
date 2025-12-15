@@ -10,3 +10,5 @@ export { ActivityHeatmap } from "./activity-heatmap";
 export { StatsOverview } from "./stats-overview";
 export { ActivityChart } from "./activity-chart";
 export { StatsActivityCard } from "./stats-activity-card";
+export { QuickActions } from "./quick-actions";
+export { TryoutCtaBanner } from "./tryout-cta-banner";
