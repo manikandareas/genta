@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 vars:
   GENTA_DB_DSN: '{{.GENTA_DB_DSN | default ""}}'
@@ -7,52 +7,52 @@ tasks:
   help:
     desc: print this help message
     cmds:
-    - task --list-all
+      - task --list-all
     silent: true
 
   confirm:
     desc: confirmation prompt
     cmds:
-    - |
-      echo -n 'Are you sure? [y/N] ' && read ans && [ ${ans:-N} = y ]
+      - |
+        echo -n 'Are you sure? [y/N] ' && read ans && [ ${ans:-N} = y ]
     silent: true
     internal: true
 
   run:
     desc: run the cmd/genta application
     cmds:
-    - go run ./cmd/genta
+      - go run ./cmd/genta
 
   migrations:new:
     desc: create a new database migration
     vars:
       NAME: '{{.name | default ""}}'
     cmds:
-    - |
-      if [ -z "{{.NAME}}" ]; then
-        echo "Error: name parameter is required"
-        echo "Usage: task migrations:new name=migration_name"
-        exit 1
-      fi
-    - echo 'Creating migration file for {{.NAME}}...'
-    - tern new -m ./internal/database/migrations {{.NAME}}
+      - |
+        if [ -z "{{.NAME}}" ]; then
+          echo "Error: name parameter is required"
+          echo "Usage: task migrations:new name=migration_name"
+          exit 1
+        fi
+      - echo 'Creating migration file for {{.NAME}}...'
+      - tern new -m ./internal/database/migrations {{.NAME}}
 
   migrations:up:
     desc: apply all up database migrations
-    deps: [ confirm ]
+    deps: [confirm]
     cmds:
-    - echo 'Running up migrations...'
-    - tern migrate -m ./internal/database/migrations --conn-string {{.GENTA_DB_DSN}}
+      - echo 'Running up migrations...'
+      - tern migrate -m ./internal/database/migrations --conn-string {{.GENTA_DB_DSN}}
 
   tidy:
     desc: format all .go files, and tidy and vendor module dependencies
     cmds:
-    - echo 'Formatting .go files...'
-    - go fmt ./...
-    - echo 'Tidying module dependencies...'
-    - go mod tidy
-    - echo 'Verifying dependencies...'
-    - go mod verify
+      - echo 'Formatting .go files...'
+      - go fmt ./...
+      - echo 'Tidying module dependencies...'
+      - go mod tidy
+      - echo 'Verifying dependencies...'
+      - go mod verify
 
   docker:up:
     desc: start docker containers (postgres, redis)
@@ -76,3 +76,41 @@ tasks:
     cmds:
       - docker compose down -v
       - docker compose up -d
+
+  db:seed:
+    desc: run database seed file
+    cmds:
+      - echo 'Running seed data...'
+      - docker exec -i genta-postgres psql -U postgres -d genta < ./internal/database/seeds/001_seed_data.sql
+      - echo 'Seed completed!'
+
+  db:psql:
+    desc: open psql shell in docker container
+    cmds:
+      - docker exec -it genta-postgres psql -U postgres -d genta
+
+  db:reset:
+    desc: reset database and run migrations + seed (WARNING - deletes all data)
+    deps:
+      - confirm
+    cmds:
+      - echo 'Resetting database...'
+      - docker compose down -v
+      - docker compose up -d
+      - echo 'Waiting for postgres to be ready...'
+      - sleep 3
+      - task: migrations:up
+      - task: db:seed
+      - echo 'Database reset completed!'
+
+  db:fresh:
+    desc: drop all tables, run migrations, and seed
+    deps:
+      - confirm
+    cmds:
+      - echo 'Dropping all tables...'
+      - docker exec -i genta-postgres psql -U postgres -d genta -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+      - echo 'Running migrations...'
+      - tern migrate -m ./internal/database/migrations --conn-string {{.GENTA_DB_DSN}}
+      - task: db:seed
+      - echo 'Fresh database ready!'
