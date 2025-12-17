@@ -19,9 +19,13 @@ func (r *GetQuestionRequest) Validate() error {
 
 // ListQuestionsRequest represents query params for listing questions
 type ListQuestionsRequest struct {
-	Section *string `query:"section" validate:"omitempty,oneof=PU PPU PBM PK LBI LBE PM"`
-	Page    int     `query:"page" validate:"min=1"`
-	Limit   int     `query:"limit" validate:"min=1,max=100"`
+	Section       *string  `query:"section" validate:"omitempty,oneof=PU PPU PBM PK LBI LBE PM"`
+	SubType       *string  `query:"sub_type" validate:"omitempty"`
+	DifficultyMin *float64 `query:"difficulty_min" validate:"omitempty"`
+	DifficultyMax *float64 `query:"difficulty_max" validate:"omitempty"`
+	IsReviewed    *bool    `query:"is_reviewed" validate:"omitempty"`
+	Page          int      `query:"page" validate:"min=1"`
+	Limit         int      `query:"limit" validate:"min=1,max=100"`
 }
 
 func (r *ListQuestionsRequest) Validate() error {
@@ -53,26 +57,25 @@ func (r *GetNextQuestionRequest) Validate() error {
 type QuestionResponse struct {
 	ID             uuid.UUID `json:"id"`
 	Section        Section   `json:"section"`
-	SubType        *string   `json:"subType"`
-	DifficultyIRT  *float64  `json:"difficultyIrt,omitempty"`
+	SubType        *string   `json:"sub_type"`
 	Text           string    `json:"text"`
-	OptionA        string    `json:"optionA"`
-	OptionB        string    `json:"optionB"`
-	OptionC        string    `json:"optionC"`
-	OptionD        string    `json:"optionD"`
-	OptionE        string    `json:"optionE"`
-	AvgTimeSeconds *int16    `json:"avgTimeSeconds,omitempty"`
+	Options        []string  `json:"options"`
+	DifficultyIRT  *float64  `json:"difficulty_irt,omitempty"`
+	Discrimination *float64  `json:"discrimination,omitempty"`
+	AttemptCount   *int      `json:"attempt_count,omitempty"`
+	CorrectRate    *float64  `json:"correct_rate,omitempty"`
+	AvgTimeSeconds *int16    `json:"avg_time_seconds,omitempty"`
 }
 
 // QuestionDetailResponse includes correct answer and explanation (after answering)
 type QuestionDetailResponse struct {
 	QuestionResponse
-	CorrectAnswer  string          `json:"correctAnswer"`
+	CorrectAnswer  string          `json:"correct_answer"`
 	Explanation    *string         `json:"explanation"`
-	ExplanationEn  *string         `json:"explanationEn,omitempty"`
-	StrategyTip    *string         `json:"strategyTip,omitempty"`
-	SolutionSteps  *[]SolutionStep `json:"solutionSteps,omitempty"`
-	RelatedConcept *string         `json:"relatedConcept,omitempty"`
+	ExplanationEn  *string         `json:"explanation_en,omitempty"`
+	StrategyTip    *string         `json:"strategy_tip,omitempty"`
+	SolutionSteps  *[]SolutionStep `json:"solution_steps,omitempty"`
+	RelatedConcept *string         `json:"related_concept,omitempty"`
 }
 
 // === Converters ===
@@ -83,13 +86,12 @@ func (q *Question) ToResponse() QuestionResponse {
 		ID:             q.ID,
 		Section:        q.Section,
 		SubType:        q.SubType,
-		DifficultyIRT:  q.DifficultyIRT,
 		Text:           q.Text,
-		OptionA:        q.OptionA,
-		OptionB:        q.OptionB,
-		OptionC:        q.OptionC,
-		OptionD:        q.OptionD,
-		OptionE:        q.OptionE,
+		Options:        []string{q.OptionA, q.OptionB, q.OptionC, q.OptionD, q.OptionE},
+		DifficultyIRT:  q.DifficultyIRT,
+		Discrimination: q.Discrimination,
+		AttemptCount:   q.AttemptCount,
+		CorrectRate:    q.CorrectRate,
 		AvgTimeSeconds: q.AvgTimeSeconds,
 	}
 }

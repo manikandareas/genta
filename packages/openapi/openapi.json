@@ -663,6 +663,37 @@
             }
           },
           {
+            "name": "sub_type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "difficulty_min",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "difficulty_max",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "is_reviewed",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "schema": {
@@ -704,33 +735,38 @@
                             "type": "string",
                             "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
                           },
-                          "subType": {
+                          "sub_type": {
                             "type": "string",
-                            "nullable": true
-                          },
-                          "difficultyIrt": {
-                            "type": "number",
                             "nullable": true
                           },
                           "text": {
                             "type": "string"
                           },
-                          "optionA": {
-                            "type": "string"
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "minItems": 5,
+                            "maxItems": 5
                           },
-                          "optionB": {
-                            "type": "string"
+                          "difficulty_irt": {
+                            "type": "number",
+                            "nullable": true
                           },
-                          "optionC": {
-                            "type": "string"
+                          "discrimination": {
+                            "type": "number",
+                            "nullable": true
                           },
-                          "optionD": {
-                            "type": "string"
+                          "attempt_count": {
+                            "type": "integer",
+                            "nullable": true
                           },
-                          "optionE": {
-                            "type": "string"
+                          "correct_rate": {
+                            "type": "number",
+                            "nullable": true
                           },
-                          "avgTimeSeconds": {
+                          "avg_time_seconds": {
                             "type": "integer",
                             "nullable": true
                           }
@@ -738,15 +774,14 @@
                         "required": [
                           "id",
                           "section",
-                          "subType",
-                          "difficultyIrt",
+                          "sub_type",
                           "text",
-                          "optionA",
-                          "optionB",
-                          "optionC",
-                          "optionD",
-                          "optionE",
-                          "avgTimeSeconds"
+                          "options",
+                          "difficulty_irt",
+                          "discrimination",
+                          "attempt_count",
+                          "correct_rate",
+                          "avg_time_seconds"
                         ]
                       }
                     },
@@ -825,33 +860,38 @@
                       "type": "string",
                       "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
                     },
-                    "subType": {
+                    "sub_type": {
                       "type": "string",
-                      "nullable": true
-                    },
-                    "difficultyIrt": {
-                      "type": "number",
                       "nullable": true
                     },
                     "text": {
                       "type": "string"
                     },
-                    "optionA": {
-                      "type": "string"
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 5,
+                      "maxItems": 5
                     },
-                    "optionB": {
-                      "type": "string"
+                    "difficulty_irt": {
+                      "type": "number",
+                      "nullable": true
                     },
-                    "optionC": {
-                      "type": "string"
+                    "discrimination": {
+                      "type": "number",
+                      "nullable": true
                     },
-                    "optionD": {
-                      "type": "string"
+                    "attempt_count": {
+                      "type": "integer",
+                      "nullable": true
                     },
-                    "optionE": {
-                      "type": "string"
+                    "correct_rate": {
+                      "type": "number",
+                      "nullable": true
                     },
-                    "avgTimeSeconds": {
+                    "avg_time_seconds": {
                       "type": "integer",
                       "nullable": true
                     }
@@ -859,15 +899,14 @@
                   "required": [
                     "id",
                     "section",
-                    "subType",
-                    "difficultyIrt",
+                    "sub_type",
                     "text",
-                    "optionA",
-                    "optionB",
-                    "optionC",
-                    "optionD",
-                    "optionE",
-                    "avgTimeSeconds"
+                    "options",
+                    "difficulty_irt",
+                    "discrimination",
+                    "attempt_count",
+                    "correct_rate",
+                    "avg_time_seconds"
                   ]
                 }
               }
@@ -946,37 +985,42 @@
                       "type": "string",
                       "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
                     },
-                    "subType": {
+                    "sub_type": {
                       "type": "string",
-                      "nullable": true
-                    },
-                    "difficultyIrt": {
-                      "type": "number",
                       "nullable": true
                     },
                     "text": {
                       "type": "string"
                     },
-                    "optionA": {
-                      "type": "string"
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 5,
+                      "maxItems": 5
                     },
-                    "optionB": {
-                      "type": "string"
+                    "difficulty_irt": {
+                      "type": "number",
+                      "nullable": true
                     },
-                    "optionC": {
-                      "type": "string"
+                    "discrimination": {
+                      "type": "number",
+                      "nullable": true
                     },
-                    "optionD": {
-                      "type": "string"
-                    },
-                    "optionE": {
-                      "type": "string"
-                    },
-                    "avgTimeSeconds": {
+                    "attempt_count": {
                       "type": "integer",
                       "nullable": true
                     },
-                    "correctAnswer": {
+                    "correct_rate": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "avg_time_seconds": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "correct_answer": {
                       "type": "string",
                       "enum": ["A", "B", "C", "D", "E"]
                     },
@@ -984,15 +1028,15 @@
                       "type": "string",
                       "nullable": true
                     },
-                    "explanationEn": {
+                    "explanation_en": {
                       "type": "string",
                       "nullable": true
                     },
-                    "strategyTip": {
+                    "strategy_tip": {
                       "type": "string",
                       "nullable": true
                     },
-                    "solutionSteps": {
+                    "solution_steps": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -1011,7 +1055,7 @@
                       },
                       "nullable": true
                     },
-                    "relatedConcept": {
+                    "related_concept": {
                       "type": "string",
                       "nullable": true
                     }
@@ -1019,21 +1063,20 @@
                   "required": [
                     "id",
                     "section",
-                    "subType",
-                    "difficultyIrt",
+                    "sub_type",
                     "text",
-                    "optionA",
-                    "optionB",
-                    "optionC",
-                    "optionD",
-                    "optionE",
-                    "avgTimeSeconds",
-                    "correctAnswer",
+                    "options",
+                    "difficulty_irt",
+                    "discrimination",
+                    "attempt_count",
+                    "correct_rate",
+                    "avg_time_seconds",
+                    "correct_answer",
                     "explanation",
-                    "explanationEn",
-                    "strategyTip",
-                    "solutionSteps",
-                    "relatedConcept"
+                    "explanation_en",
+                    "strategy_tip",
+                    "solution_steps",
+                    "related_concept"
                   ]
                 }
               }

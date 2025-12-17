@@ -13,42 +13,38 @@ export const ZSolutionStep = z.object({
 // Base Question schema
 export const ZQuestion = z.object({
   id: z.string().uuid(),
-  questionBankId: z.string().uuid().nullable(),
+  question_bank_id: z.string().uuid().nullable(),
   section: ZSection,
-  subType: z.string().nullable(),
+  sub_type: z.string().nullable(),
 
   // IRT Parameters
-  difficultyIrt: z.number().nullable(),
+  difficulty_irt: z.number().nullable(),
   discrimination: z.number().nullable(),
-  guessingParam: z.number().nullable(),
+  guessing_param: z.number().nullable(),
 
   // Question Content
   text: z.string(),
-  optionA: z.string(),
-  optionB: z.string(),
-  optionC: z.string(),
-  optionD: z.string(),
-  optionE: z.string(),
-  correctAnswer: z.enum(["A", "B", "C", "D", "E"]),
+  options: z.array(z.string()).length(5),
+  correct_answer: z.enum(["A", "B", "C", "D", "E"]),
 
   // Explanation
   explanation: z.string().nullable(),
-  explanationEn: z.string().nullable(),
-  strategyTip: z.string().nullable(),
-  relatedConcept: z.string().nullable(),
-  solutionSteps: z.array(ZSolutionStep).nullable(),
+  explanation_en: z.string().nullable(),
+  strategy_tip: z.string().nullable(),
+  related_concept: z.string().nullable(),
+  solution_steps: z.array(ZSolutionStep).nullable(),
 
-  isActive: z.boolean(),
+  is_active: z.boolean(),
 
   // Statistics
-  attemptCount: z.number().int().nullable(),
-  correctRate: z.number().nullable(),
-  avgTimeSeconds: z.number().int().nullable(),
+  attempt_count: z.number().int().nullable(),
+  correct_rate: z.number().nullable(),
+  avg_time_seconds: z.number().int().nullable(),
 
   // Timestamps
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
-  deletedAt: z.string().datetime().nullable(),
+  created_at: z.string().datetime(),
+  updated_at: z.string().datetime(),
+  deleted_at: z.string().datetime().nullable(),
 });
 
 // === Request Schemas ===
@@ -56,6 +52,10 @@ export const ZQuestion = z.object({
 // List questions query params
 export const ZListQuestionsQuery = z.object({
   section: ZSection.optional(),
+  sub_type: z.string().optional(),
+  difficulty_min: z.coerce.number().optional(),
+  difficulty_max: z.coerce.number().optional(),
+  is_reviewed: z.coerce.boolean().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(10),
 });
@@ -76,25 +76,24 @@ export const ZGetQuestionParams = z.object({
 export const ZQuestionResponse = z.object({
   id: z.string().uuid(),
   section: ZSection,
-  subType: z.string().nullable(),
-  difficultyIrt: z.number().nullable(),
+  sub_type: z.string().nullable(),
   text: z.string(),
-  optionA: z.string(),
-  optionB: z.string(),
-  optionC: z.string(),
-  optionD: z.string(),
-  optionE: z.string(),
-  avgTimeSeconds: z.number().int().nullable(),
+  options: z.array(z.string()).length(5),
+  difficulty_irt: z.number().nullable(),
+  discrimination: z.number().nullable(),
+  attempt_count: z.number().int().nullable(),
+  correct_rate: z.number().nullable(),
+  avg_time_seconds: z.number().int().nullable(),
 });
 
 // Question detail response (with correct answer - after answering)
 export const ZQuestionDetailResponse = ZQuestionResponse.extend({
-  correctAnswer: z.enum(["A", "B", "C", "D", "E"]),
+  correct_answer: z.enum(["A", "B", "C", "D", "E"]),
   explanation: z.string().nullable(),
-  explanationEn: z.string().nullable(),
-  strategyTip: z.string().nullable(),
-  solutionSteps: z.array(ZSolutionStep).nullable(),
-  relatedConcept: z.string().nullable(),
+  explanation_en: z.string().nullable(),
+  strategy_tip: z.string().nullable(),
+  solution_steps: z.array(ZSolutionStep).nullable(),
+  related_concept: z.string().nullable(),
 });
 
 // Paginated questions response

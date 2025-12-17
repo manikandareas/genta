@@ -51,25 +51,44 @@ func (r *QuestionRepository) GetByID(ctx context.Context, questionID string) (*q
 // List retrieves questions with optional filtering and pagination
 func (r *QuestionRepository) List(ctx context.Context, req *question.ListQuestionsRequest) ([]question.Question, int, error) {
 	offset := (req.Page - 1) * req.Limit
-
-	// Use separate queries for with/without section filter to avoid dynamic SQL
-	if req.Section != nil {
-		return r.listWithSection(ctx, *req.Section, req.Limit, offset)
-	}
-	return r.listAll(ctx, req.Limit, offset)
-}
-
-// listWithSection retrieves questions filtered by section
-func (r *QuestionRepository) listWithSection(ctx context.Context, section string, limit, offset int) ([]question.Question, int, error) {
 	args := pgx.NamedArgs{
-		"section": section,
-		"limit":   limit,
-		"offset":  offset,
+		"limit":  req.Limit,
+		"offset": offset,
 	}
+
+	// Build WHERE conditions
+	conditions := []string{"deleted_at IS NULL", "is_active = true"}
+
+	if req.Section != nil {
+		conditions = append(conditions, "section = @section")
+		args["section"] = *req.Section
+	}
+
+	if req.SubType != nil {
+		conditions = append(conditions, "sub_type = @sub_type")
+		args["sub_type"] = *req.SubType
+	}
+
+	if req.DifficultyMin != nil {
+		conditions = append(conditions, "difficulty_irt >= @difficulty_min")
+		args["difficulty_min"] = *req.DifficultyMin
+	}
+
+	if req.DifficultyMax != nil {
+		conditions = append(conditions, "difficulty_irt <= @difficulty_max")
+		args["difficulty_max"] = *req.DifficultyMax
+	}
+
+	if req.IsReviewed != nil {
+		conditions = append(conditions, "question_bank_id IN (SELECT id FROM question_banks WHERE is_reviewed = @is_reviewed)")
+		args["is_reviewed"] = *req.IsReviewed
+	}
+
+	whereClause := "WHERE " + joinConditions(conditions)
 
 	// Count total
 	var total int
-	countStmt := `SELECT COUNT(*) FROM questions WHERE deleted_at IS NULL AND is_active = true AND section = @section`
+	countStmt := "SELECT COUNT(*) FROM questions " + whereClause
 	err := r.server.DB.Pool.QueryRow(ctx, countStmt, args).Scan(&total)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to count questions: %w", err)
@@ -84,7 +103,7 @@ func (r *QuestionRepository) listWithSection(ctx context.Context, section string
 			is_active, attempt_count, correct_rate, avg_time_seconds,
 			created_at, updated_at, deleted_at
 		FROM questions 
-		WHERE deleted_at IS NULL AND is_active = true AND section = @section
+		` + whereClause + `
 		ORDER BY created_at DESC
 		LIMIT @limit OFFSET @offset
 	`
@@ -102,46 +121,16 @@ func (r *QuestionRepository) listWithSection(ctx context.Context, section string
 	return questions, total, nil
 }
 
-// listAll retrieves all questions without section filter
-func (r *QuestionRepository) listAll(ctx context.Context, limit, offset int) ([]question.Question, int, error) {
-	args := pgx.NamedArgs{
-		"limit":  limit,
-		"offset": offset,
+// joinConditions joins conditions with AND
+func joinConditions(conditions []string) string {
+	result := ""
+	for i, c := range conditions {
+		if i > 0 {
+			result += " AND "
+		}
+		result += c
 	}
-
-	// Count total
-	var total int
-	countStmt := `SELECT COUNT(*) FROM questions WHERE deleted_at IS NULL AND is_active = true`
-	err := r.server.DB.Pool.QueryRow(ctx, countStmt).Scan(&total)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to count questions: %w", err)
-	}
-
-	// Get questions
-	stmt := `
-		SELECT id, question_bank_id, section, sub_type, 
-			difficulty_irt, discrimination, guessing_param,
-			text, option_a, option_b, option_c, option_d, option_e, correct_answer,
-			explanation, explanation_en, strategy_tip, related_concept, solution_steps,
-			is_active, attempt_count, correct_rate, avg_time_seconds,
-			created_at, updated_at, deleted_at
-		FROM questions 
-		WHERE deleted_at IS NULL AND is_active = true
-		ORDER BY created_at DESC
-		LIMIT @limit OFFSET @offset
-	`
-
-	rows, err := r.server.DB.Pool.Query(ctx, stmt, args)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to execute query: %w", err)
-	}
-
-	questions, err := pgx.CollectRows(rows, pgx.RowToStructByName[question.Question])
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to collect rows: %w", err)
-	}
-
-	return questions, total, nil
+	return result
 }
 
 // GetNextForUser retrieves the next question for adaptive learning
