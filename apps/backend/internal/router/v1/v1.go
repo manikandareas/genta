@@ -12,4 +12,7 @@ func RegisterV1Routes(router *echo.Group, handlers *handler.Handlers, middleware
 
 	// question routes
 	registerQuestionRoutes(router, handlers.Question, middleware.Auth)
+
+	// attempt routes
+	registerAttemptRoutes(router, handlers.Attempt, middleware.Auth)
 }

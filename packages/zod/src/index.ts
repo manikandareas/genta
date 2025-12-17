@@ -7,3 +7,4 @@ export * from "./utils.js";
 export * from "./health.js";
 export * from "./user.js";
 export * from "./question.js";
+export * from "./attempt.js";

@@ -6,6 +6,7 @@ type Repositories struct {
 	User      *UserRepository
 	Readiness *ReadinessRepository
 	Question  *QuestionRepository
+	Attempt   *AttemptRepository
 }
 
 func NewRepositories(s *server.Server) *Repositories {
@@ -13,5 +14,6 @@ func NewRepositories(s *server.Server) *Repositories {
 		User:      NewUserRepository(s),
 		Readiness: NewReadinessRepository(s),
 		Question:  NewQuestionRepository(s),
+		Attempt:   NewAttemptRepository(s),
 	}
 }

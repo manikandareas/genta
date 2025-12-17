@@ -1121,6 +1121,461 @@
           }
         ]
       }
+    },
+    "/api/v1/attempts": {
+      "post": {
+        "description": "Record a student's answer attempt, check correctness, and calculate IRT theta update",
+        "summary": "Record an answer attempt",
+        "tags": ["Attempt"],
+        "parameters": [],
+        "operationId": "createAttempt",
+        "requestBody": {
+          "description": "Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "question_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "selected_answer": {
+                    "type": "string",
+                    "enum": ["A", "B", "C", "D", "E"]
+                  },
+                  "time_spent_seconds": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 600
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "maxLength": 100
+                  }
+                },
+                "required": ["question_id", "selected_answer", "time_spent_seconds", "session_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "question_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "selected_answer": {
+                      "type": "string",
+                      "enum": ["A", "B", "C", "D", "E"]
+                    },
+                    "is_correct": {
+                      "type": "boolean"
+                    },
+                    "time_spent_seconds": {
+                      "type": "integer"
+                    },
+                    "user_theta_before": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "user_theta_after": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "theta_change": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "feedback_generated": {
+                      "type": "boolean"
+                    },
+                    "session_id": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "question_id",
+                    "selected_answer",
+                    "is_correct",
+                    "time_spent_seconds",
+                    "user_theta_before",
+                    "user_theta_after",
+                    "theta_change",
+                    "feedback_generated",
+                    "session_id",
+                    "created_at"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/attempts/{attempt_id}": {
+      "get": {
+        "description": "Get attempt details with question and feedback information",
+        "summary": "Get attempt by ID",
+        "tags": ["Attempt"],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "operationId": "getAttempt",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "question_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "selected_answer": {
+                      "type": "string",
+                      "enum": ["A", "B", "C", "D", "E"]
+                    },
+                    "correct_answer": {
+                      "type": "string",
+                      "enum": ["A", "B", "C", "D", "E"]
+                    },
+                    "is_correct": {
+                      "type": "boolean"
+                    },
+                    "time_spent_seconds": {
+                      "type": "integer"
+                    },
+                    "theta_change": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "question": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "text": {
+                          "type": "string"
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 5,
+                          "maxItems": 5
+                        },
+                        "explanation": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      },
+                      "required": ["id", "text", "options", "explanation"],
+                      "nullable": true
+                    },
+                    "feedback": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "feedback_text": {
+                          "type": "string"
+                        },
+                        "model_used": {
+                          "type": "string"
+                        },
+                        "generation_time_ms": {
+                          "type": "integer",
+                          "nullable": true
+                        },
+                        "is_helpful": {
+                          "type": "boolean",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "feedback_text",
+                        "model_used",
+                        "generation_time_ms",
+                        "is_helpful"
+                      ],
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "question_id",
+                    "selected_answer",
+                    "correct_answer",
+                    "is_correct",
+                    "time_spent_seconds",
+                    "theta_change",
+                    "created_at",
+                    "question",
+                    "feedback"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/attempts/{attempt_id}/feedback-rating": {
+      "put": {
+        "description": "Update the helpfulness rating for attempt feedback (thumbs up/down)",
+        "summary": "Rate feedback helpfulness",
+        "tags": ["Attempt"],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "operationId": "updateFeedbackRating",
+        "requestBody": {
+          "description": "Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "is_helpful": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["is_helpful"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attempt_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "is_helpful": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["attempt_id", "is_helpful"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "info": {
