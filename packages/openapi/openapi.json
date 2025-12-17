@@ -647,6 +647,437 @@
           }
         ]
       }
+    },
+    "/api/v1/questions": {
+      "get": {
+        "description": "Get paginated list of questions with optional section filter",
+        "summary": "List questions",
+        "tags": ["Question"],
+        "parameters": [
+          {
+            "name": "section",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "operationId": "listQuestions",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "section": {
+                            "type": "string",
+                            "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+                          },
+                          "subType": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "difficultyIrt": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "text": {
+                            "type": "string"
+                          },
+                          "optionA": {
+                            "type": "string"
+                          },
+                          "optionB": {
+                            "type": "string"
+                          },
+                          "optionC": {
+                            "type": "string"
+                          },
+                          "optionD": {
+                            "type": "string"
+                          },
+                          "optionE": {
+                            "type": "string"
+                          },
+                          "avgTimeSeconds": {
+                            "type": "integer",
+                            "nullable": true
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "section",
+                          "subType",
+                          "difficultyIrt",
+                          "text",
+                          "optionA",
+                          "optionB",
+                          "optionC",
+                          "optionD",
+                          "optionE",
+                          "avgTimeSeconds"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "totalPages": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["data", "total", "page", "limit", "totalPages"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/questions/next": {
+      "get": {
+        "description": "Get the next question for adaptive learning based on user's skill level and section",
+        "summary": "Get next question for practice",
+        "tags": ["Question"],
+        "parameters": [
+          {
+            "name": "section",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+            }
+          }
+        ],
+        "operationId": "getNextQuestion",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+                    },
+                    "subType": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "difficultyIrt": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "optionA": {
+                      "type": "string"
+                    },
+                    "optionB": {
+                      "type": "string"
+                    },
+                    "optionC": {
+                      "type": "string"
+                    },
+                    "optionD": {
+                      "type": "string"
+                    },
+                    "optionE": {
+                      "type": "string"
+                    },
+                    "avgTimeSeconds": {
+                      "type": "integer",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "section",
+                    "subType",
+                    "difficultyIrt",
+                    "text",
+                    "optionA",
+                    "optionB",
+                    "optionC",
+                    "optionD",
+                    "optionE",
+                    "avgTimeSeconds"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/questions/{id}": {
+      "get": {
+        "description": "Get a single question with full details including correct answer and explanation",
+        "summary": "Get question by ID",
+        "tags": ["Question"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "operationId": "getQuestion",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+                    },
+                    "subType": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "difficultyIrt": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "optionA": {
+                      "type": "string"
+                    },
+                    "optionB": {
+                      "type": "string"
+                    },
+                    "optionC": {
+                      "type": "string"
+                    },
+                    "optionD": {
+                      "type": "string"
+                    },
+                    "optionE": {
+                      "type": "string"
+                    },
+                    "avgTimeSeconds": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "correctAnswer": {
+                      "type": "string",
+                      "enum": ["A", "B", "C", "D", "E"]
+                    },
+                    "explanation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "explanationEn": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "strategyTip": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "solutionSteps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "order": {
+                            "type": "integer"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "content": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["order", "title", "content"]
+                      },
+                      "nullable": true
+                    },
+                    "relatedConcept": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "section",
+                    "subType",
+                    "difficultyIrt",
+                    "text",
+                    "optionA",
+                    "optionB",
+                    "optionC",
+                    "optionD",
+                    "optionE",
+                    "avgTimeSeconds",
+                    "correctAnswer",
+                    "explanation",
+                    "explanationEn",
+                    "strategyTip",
+                    "solutionSteps",
+                    "relatedConcept"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "info": {

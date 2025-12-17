@@ -10,9 +10,10 @@ import (
 )
 
 type Services struct {
-	Auth *AuthService
-	Job  *job.JobService
-	User *UserService
+	Auth     *AuthService
+	Job      *job.JobService
+	User     *UserService
+	Question *QuestionService
 }
 
 func NewServices(s *server.Server, repos *repository.Repositories) (*Services, error) {
@@ -24,10 +25,12 @@ func NewServices(s *server.Server, repos *repository.Repositories) (*Services, e
 	}
 
 	userService := NewUserService(s, repos.User, repos.Readiness, clerkClient)
+	questionService := NewQuestionService(s, repos.Question, repos.User)
 
 	return &Services{
-		Job:  s.Job,
-		Auth: authService,
-		User: userService,
+		Job:      s.Job,
+		Auth:     authService,
+		User:     userService,
+		Question: questionService,
 	}, nil
 }
