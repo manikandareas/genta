@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ZSection } from "./question.js";
 
 // Answer enum
 export const ZAnswer = z.enum(["A", "B", "C", "D", "E"]);
@@ -95,6 +94,14 @@ export const ZFeedbackResponse = z.object({
   is_helpful: z.boolean().nullable(),
 });
 
+// Job response (embedded in attempt response)
+export const ZJobInAttemptResponse = z.object({
+  job_id: z.string(),
+  status: z.string(),
+  estimated_completion_seconds: z.number().int(),
+  check_status_url: z.string(),
+});
+
 // Attempt response (after submission)
 export const ZAttemptResponse = z.object({
   id: z.string().uuid(),
@@ -108,6 +115,7 @@ export const ZAttemptResponse = z.object({
   feedback_generated: z.boolean(),
   session_id: z.string().nullable(),
   created_at: z.string().datetime(),
+  job: ZJobInAttemptResponse.nullable().optional(),
 });
 
 // Attempt detail response (with question and feedback)
@@ -139,6 +147,7 @@ export type GetAttemptParams = z.infer<typeof ZGetAttemptParams>;
 export type UpdateFeedbackRatingRequest = z.infer<typeof ZUpdateFeedbackRatingRequest>;
 export type QuestionInAttempt = z.infer<typeof ZQuestionInAttempt>;
 export type FeedbackResponse = z.infer<typeof ZFeedbackResponse>;
+export type JobInAttemptResponse = z.infer<typeof ZJobInAttemptResponse>;
 export type AttemptResponse = z.infer<typeof ZAttemptResponse>;
 export type AttemptDetailResponse = z.infer<typeof ZAttemptDetailResponse>;
 export type FeedbackRatingResponse = z.infer<typeof ZFeedbackRatingResponse>;

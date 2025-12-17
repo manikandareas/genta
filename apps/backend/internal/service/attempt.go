@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/manikandareas/genta/internal/errs"
+	"github.com/manikandareas/genta/internal/lib/job"
 	"github.com/manikandareas/genta/internal/middleware"
 	"github.com/manikandareas/genta/internal/model/attempt"
 	"github.com/manikandareas/genta/internal/repository"
@@ -15,6 +16,7 @@ type AttemptService struct {
 	attemptRepo  *repository.AttemptRepository
 	questionRepo *repository.QuestionRepository
 	userRepo     *repository.UserRepository
+	jobService   *job.JobService
 }
 
 func NewAttemptService(
@@ -22,12 +24,14 @@ func NewAttemptService(
 	attemptRepo *repository.AttemptRepository,
 	questionRepo *repository.QuestionRepository,
 	userRepo *repository.UserRepository,
+	jobService *job.JobService,
 ) *AttemptService {
 	return &AttemptService{
 		server:       server,
 		attemptRepo:  attemptRepo,
 		questionRepo: questionRepo,
 		userRepo:     userRepo,
+		jobService:   jobService,
 	}
 }
 
@@ -91,6 +95,31 @@ func (s *AttemptService) Create(ctx echo.Context, clerkID string, req *attempt.C
 		_ = s.attemptRepo.UpdateQuestionStats(ctx.Request().Context(), questionUUID, isCorrect, req.TimeSpentSeconds)
 	}()
 
+	// Enqueue feedback generation task
+	var jobID string
+	if s.jobService != nil {
+		task, err := job.NewFeedbackGenerationTask(
+			created.ID.String(),
+			user.ID.String(),
+			req.QuestionID,
+			isCorrect,
+		)
+		if err != nil {
+			logger.Warn().Err(err).Msg("failed to create feedback generation task")
+		} else {
+			info, err := s.jobService.Client.Enqueue(task)
+			if err != nil {
+				logger.Warn().Err(err).Msg("failed to enqueue feedback generation task")
+			} else {
+				jobID = info.ID
+				logger.Info().
+					Str("job_id", jobID).
+					Str("attempt_id", created.ID.String()).
+					Msg("Feedback generation task enqueued")
+			}
+		}
+	}
+
 	logger.Info().
 		Str("event", "attempt_created").
 		Str("user_id", user.ID.String()).
@@ -99,7 +128,7 @@ func (s *AttemptService) Create(ctx echo.Context, clerkID string, req *attempt.C
 		Float64("theta_change", thetaChange).
 		Msg("Attempt recorded")
 
-	response := created.ToResponse()
+	response := created.ToResponseWithJob(jobID)
 	return &response, nil
 }
 

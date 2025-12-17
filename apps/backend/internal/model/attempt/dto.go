@@ -46,17 +46,26 @@ func (r *UpdateFeedbackRatingRequest) Validate() error {
 
 // AttemptResponse represents the API response for an attempt (after submission)
 type AttemptResponse struct {
-	ID                uuid.UUID `json:"id"`
-	QuestionID        uuid.UUID `json:"question_id"`
-	SelectedAnswer    string    `json:"selected_answer"`
-	IsCorrect         bool      `json:"is_correct"`
-	TimeSpentSeconds  int16     `json:"time_spent_seconds"`
-	UserThetaBefore   *float64  `json:"user_theta_before"`
-	UserThetaAfter    *float64  `json:"user_theta_after"`
-	ThetaChange       *float64  `json:"theta_change"`
-	FeedbackGenerated bool      `json:"feedback_generated"`
-	SessionID         *string   `json:"session_id"`
-	CreatedAt         string    `json:"created_at"`
+	ID                uuid.UUID    `json:"id"`
+	QuestionID        uuid.UUID    `json:"question_id"`
+	SelectedAnswer    string       `json:"selected_answer"`
+	IsCorrect         bool         `json:"is_correct"`
+	TimeSpentSeconds  int16        `json:"time_spent_seconds"`
+	UserThetaBefore   *float64     `json:"user_theta_before"`
+	UserThetaAfter    *float64     `json:"user_theta_after"`
+	ThetaChange       *float64     `json:"theta_change"`
+	FeedbackGenerated bool         `json:"feedback_generated"`
+	SessionID         *string      `json:"session_id"`
+	CreatedAt         string       `json:"created_at"`
+	Job               *JobResponse `json:"job,omitempty"`
+}
+
+// JobResponse represents job info in attempt response
+type JobResponse struct {
+	JobID                      string `json:"job_id"`
+	Status                     string `json:"status"`
+	EstimatedCompletionSeconds int    `json:"estimated_completion_seconds"`
+	CheckStatusURL             string `json:"check_status_url"`
 }
 
 // AttemptDetailResponse includes question and feedback details
@@ -113,6 +122,20 @@ func (a *Attempt) ToResponse() AttemptResponse {
 		SessionID:         a.SessionID,
 		CreatedAt:         a.CreatedAt.Format("2006-01-02T15:04:05Z"),
 	}
+}
+
+// ToResponseWithJob converts Attempt to AttemptResponse with job info
+func (a *Attempt) ToResponseWithJob(jobID string) AttemptResponse {
+	resp := a.ToResponse()
+	if jobID != "" {
+		resp.Job = &JobResponse{
+			JobID:                      jobID,
+			Status:                     "queued",
+			EstimatedCompletionSeconds: 8,
+			CheckStatusURL:             "/api/v1/jobs/" + jobID + "/check",
+		}
+	}
+	return resp
 }
 
 // ToDetailResponse converts Attempt to AttemptDetailResponse (with question & feedback)

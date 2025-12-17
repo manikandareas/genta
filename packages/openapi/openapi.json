@@ -1207,6 +1207,30 @@
                     "created_at": {
                       "type": "string",
                       "format": "date-time"
+                    },
+                    "job": {
+                      "type": "object",
+                      "properties": {
+                        "job_id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "estimated_completion_seconds": {
+                          "type": "integer"
+                        },
+                        "check_status_url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "job_id",
+                        "status",
+                        "estimated_completion_seconds",
+                        "check_status_url"
+                      ],
+                      "nullable": true
                     }
                   },
                   "required": [
