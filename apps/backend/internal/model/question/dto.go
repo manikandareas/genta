@@ -3,6 +3,7 @@ package question
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+	"github.com/manikandareas/genta/internal/model"
 )
 
 // === Request DTOs ===
@@ -55,16 +56,16 @@ func (r *GetNextQuestionRequest) Validate() error {
 
 // QuestionResponse represents the API response for a question (without correct answer for practice)
 type QuestionResponse struct {
-	ID             uuid.UUID `json:"id"`
-	Section        Section   `json:"section"`
-	SubType        *string   `json:"sub_type"`
-	Text           string    `json:"text"`
-	Options        []string  `json:"options"`
-	DifficultyIRT  *float64  `json:"difficulty_irt,omitempty"`
-	Discrimination *float64  `json:"discrimination,omitempty"`
-	AttemptCount   *int      `json:"attempt_count,omitempty"`
-	CorrectRate    *float64  `json:"correct_rate,omitempty"`
-	AvgTimeSeconds *int16    `json:"avg_time_seconds,omitempty"`
+	ID             uuid.UUID     `json:"id"`
+	Section        model.Section `json:"section"`
+	SubType        *string       `json:"sub_type"`
+	Text           string        `json:"text"`
+	Options        []string      `json:"options"`
+	DifficultyIRT  *float64      `json:"difficulty_irt,omitempty"`
+	Discrimination *float64      `json:"discrimination,omitempty"`
+	AttemptCount   *int          `json:"attempt_count,omitempty"`
+	CorrectRate    *float64      `json:"correct_rate,omitempty"`
+	AvgTimeSeconds *int16        `json:"avg_time_seconds,omitempty"`
 }
 
 // QuestionDetailResponse includes correct answer and explanation (after answering)

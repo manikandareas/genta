@@ -11,6 +11,7 @@ type Handlers struct {
 	User     *UserHandler
 	Question *QuestionHandler
 	Attempt  *AttemptHandler
+	Session  *SessionHandler
 }
 
 func NewHandlers(s *server.Server, services *service.Services) *Handlers {
@@ -20,5 +21,6 @@ func NewHandlers(s *server.Server, services *service.Services) *Handlers {
 		User:     NewUserHandler(s, services.User),
 		Question: NewQuestionHandler(s, services.Question),
 		Attempt:  NewAttemptHandler(s, services.Attempt),
+		Session:  NewSessionHandler(s, services.Session),
 	}
 }

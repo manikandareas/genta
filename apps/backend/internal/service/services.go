@@ -15,6 +15,7 @@ type Services struct {
 	User     *UserService
 	Question *QuestionService
 	Attempt  *AttemptService
+	Session  *SessionService
 }
 
 func NewServices(s *server.Server, repos *repository.Repositories) (*Services, error) {
@@ -28,6 +29,7 @@ func NewServices(s *server.Server, repos *repository.Repositories) (*Services, e
 	userService := NewUserService(s, repos.User, repos.Readiness, clerkClient)
 	questionService := NewQuestionService(s, repos.Question, repos.User)
 	attemptService := NewAttemptService(s, repos.Attempt, repos.Question, repos.User)
+	sessionService := NewSessionService(s, repos.Session, repos.User)
 
 	return &Services{
 		Job:      s.Job,
@@ -35,5 +37,6 @@ func NewServices(s *server.Server, repos *repository.Repositories) (*Services, e
 		User:     userService,
 		Question: questionService,
 		Attempt:  attemptService,
+		Session:  sessionService,
 	}, nil
 }

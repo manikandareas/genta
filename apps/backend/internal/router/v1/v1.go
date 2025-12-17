@@ -15,4 +15,7 @@ func RegisterV1Routes(router *echo.Group, handlers *handler.Handlers, middleware
 
 	// attempt routes
 	registerAttemptRoutes(router, handlers.Attempt, middleware.Auth)
+
+	// session routes
+	registerSessionRoutes(router, handlers.Session, middleware.Auth)
 }

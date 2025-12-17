@@ -3,6 +3,7 @@ import { healthContract } from "./health.js";
 import { userContract } from "./user.js";
 import { questionContract } from "./question.js";
 import { attemptContract } from "./attempt.js";
+import { sessionContract } from "./session.js";
 
 const c = initContract();
 
@@ -11,4 +12,5 @@ export const apiContract = c.router({
   User: userContract,
   Question: questionContract,
   Attempt: attemptContract,
+  Session: sessionContract,
 });

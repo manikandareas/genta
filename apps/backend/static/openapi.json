@@ -1576,6 +1576,461 @@
           }
         ]
       }
+    },
+    "/api/v1/sessions": {
+      "get": {
+        "description": "Get paginated list of study sessions for the current user",
+        "summary": "List study sessions",
+        "tags": ["Session"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        ],
+        "operationId": "listSessions",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "started_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "ended_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "duration_minutes": {
+                            "type": "integer",
+                            "nullable": true
+                          },
+                          "questions_attempted": {
+                            "type": "integer"
+                          },
+                          "questions_correct": {
+                            "type": "integer"
+                          },
+                          "accuracy_in_session": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "section": {
+                            "type": "string",
+                            "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"],
+                            "nullable": true
+                          }
+                        },
+                        "required": ["id", "started_at", "questions_attempted", "questions_correct"]
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "totalPages": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["data", "total", "page", "limit", "totalPages"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "Start a new study session for the current user",
+        "summary": "Start a new study session",
+        "tags": ["Session"],
+        "parameters": [],
+        "operationId": "createSession",
+        "requestBody": {
+          "description": "Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "section": {
+                    "type": "string",
+                    "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"],
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "started_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "ended_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "duration_minutes": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "questions_attempted": {
+                      "type": "integer"
+                    },
+                    "questions_correct": {
+                      "type": "integer"
+                    },
+                    "accuracy_in_session": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"],
+                      "nullable": true
+                    }
+                  },
+                  "required": ["id", "started_at", "questions_attempted", "questions_correct"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/sessions/{session_id}": {
+      "get": {
+        "description": "Get details of a specific study session",
+        "summary": "Get study session by ID",
+        "tags": ["Session"],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "operationId": "getSession",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "started_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "ended_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "duration_minutes": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "questions_attempted": {
+                      "type": "integer"
+                    },
+                    "questions_correct": {
+                      "type": "integer"
+                    },
+                    "accuracy_in_session": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"],
+                      "nullable": true
+                    }
+                  },
+                  "required": ["id", "started_at", "questions_attempted", "questions_correct"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/sessions/{session_id}/end": {
+      "put": {
+        "description": "End a study session and calculate duration/accuracy",
+        "summary": "End a study session",
+        "tags": ["Session"],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "operationId": "endSession",
+        "requestBody": {
+          "description": "Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "started_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "ended_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "duration_minutes": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "questions_attempted": {
+                      "type": "integer"
+                    },
+                    "questions_correct": {
+                      "type": "integer"
+                    },
+                    "accuracy_in_session": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"],
+                      "nullable": true
+                    }
+                  },
+                  "required": ["id", "started_at", "questions_attempted", "questions_correct"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "info": {
