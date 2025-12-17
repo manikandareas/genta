@@ -2589,6 +2589,176 @@
           }
         ]
       }
+    },
+    "/api/v1/analytics/progress": {
+      "get": {
+        "description": "Get user's progress analytics including accuracy trend and section breakdown",
+        "summary": "Get progress analytics",
+        "tags": ["Analytics"],
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "default": 7,
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
+            "name": "section",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+            }
+          }
+        ],
+        "operationId": "getProgress",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period_days": {
+                      "type": "integer"
+                    },
+                    "total_questions_attempted": {
+                      "type": "integer"
+                    },
+                    "total_correct": {
+                      "type": "integer"
+                    },
+                    "average_accuracy": {
+                      "type": "number"
+                    },
+                    "accuracy_trend": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date": {
+                            "type": "string"
+                          },
+                          "accuracy": {
+                            "type": "number"
+                          },
+                          "attempts": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": ["date", "accuracy", "attempts"]
+                      }
+                    },
+                    "section_breakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "section": {
+                            "type": "string"
+                          },
+                          "section_name": {
+                            "type": "string"
+                          },
+                          "attempts": {
+                            "type": "integer"
+                          },
+                          "correct": {
+                            "type": "integer"
+                          },
+                          "accuracy": {
+                            "type": "number"
+                          },
+                          "avg_time_seconds": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "section",
+                          "section_name",
+                          "attempts",
+                          "correct",
+                          "accuracy",
+                          "avg_time_seconds"
+                        ]
+                      }
+                    },
+                    "improvement_this_week": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "period_days",
+                    "total_questions_attempted",
+                    "total_correct",
+                    "average_accuracy",
+                    "accuracy_trend",
+                    "section_breakdown",
+                    "improvement_this_week"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "info": {

@@ -8,6 +8,7 @@ type Repositories struct {
 	Question  *QuestionRepository
 	Attempt   *AttemptRepository
 	Session   *SessionRepository
+	Analytics *AnalyticsRepository
 }
 
 func NewRepositories(s *server.Server) *Repositories {
@@ -17,5 +18,6 @@ func NewRepositories(s *server.Server) *Repositories {
 		Question:  NewQuestionRepository(s),
 		Attempt:   NewAttemptRepository(s),
 		Session:   NewSessionRepository(s),
+		Analytics: NewAnalyticsRepository(s),
 	}
 }

@@ -5,6 +5,7 @@ import { questionContract } from "./question.js";
 import { attemptContract } from "./attempt.js";
 import { sessionContract } from "./session.js";
 import { readinessContract } from "./readiness.js";
+import { analyticsContract } from "./analytics.js";
 
 const c = initContract();
 
@@ -15,4 +16,5 @@ export const apiContract = c.router({
   Attempt: attemptContract,
   Session: sessionContract,
   Readiness: readinessContract,
+  Analytics: analyticsContract,
 });

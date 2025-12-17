@@ -17,6 +17,7 @@ type Services struct {
 	Attempt   *AttemptService
 	Session   *SessionService
 	Readiness *ReadinessService
+	Analytics *AnalyticsService
 }
 
 func NewServices(s *server.Server, repos *repository.Repositories) (*Services, error) {
@@ -32,6 +33,7 @@ func NewServices(s *server.Server, repos *repository.Repositories) (*Services, e
 	attemptService := NewAttemptService(s, repos.Attempt, repos.Question, repos.User)
 	sessionService := NewSessionService(s, repos.Session, repos.User)
 	readinessService := NewReadinessService(s, repos.Readiness, repos.User)
+	analyticsService := NewAnalyticsService(s, repos.Analytics, repos.User)
 
 	return &Services{
 		Job:       s.Job,
@@ -41,5 +43,6 @@ func NewServices(s *server.Server, repos *repository.Repositories) (*Services, e
 		Attempt:   attemptService,
 		Session:   sessionService,
 		Readiness: readinessService,
+		Analytics: analyticsService,
 	}, nil
 }
