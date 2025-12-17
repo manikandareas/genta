@@ -18,4 +18,7 @@ func RegisterV1Routes(router *echo.Group, handlers *handler.Handlers, middleware
 
 	// session routes
 	registerSessionRoutes(router, handlers.Session, middleware.Auth)
+
+	// readiness routes
+	registerReadinessRoutes(router, handlers.Readiness, middleware.Auth)
 }

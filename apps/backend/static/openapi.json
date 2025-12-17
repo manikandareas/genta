@@ -2031,6 +2031,564 @@
           }
         ]
       }
+    },
+    "/api/v1/readiness": {
+      "get": {
+        "description": "Get overall readiness across all UTBK sections for the current user",
+        "summary": "Get readiness overview",
+        "tags": ["Readiness"],
+        "parameters": [],
+        "operationId": "getReadinessOverview",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "overall_readiness": {
+                      "type": "number"
+                    },
+                    "total_attempts": {
+                      "type": "integer"
+                    },
+                    "total_correct": {
+                      "type": "integer"
+                    },
+                    "overall_accuracy": {
+                      "type": "number"
+                    },
+                    "section_readiness": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "section": {
+                            "type": "string",
+                            "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+                          },
+                          "overall_accuracy": {
+                            "type": "number"
+                          },
+                          "recent_accuracy": {
+                            "type": "number"
+                          },
+                          "readiness_percentage": {
+                            "type": "number"
+                          },
+                          "current_theta": {
+                            "type": "number"
+                          },
+                          "target_theta": {
+                            "type": "number"
+                          },
+                          "predicted_score_low": {
+                            "type": "integer"
+                          },
+                          "predicted_score_high": {
+                            "type": "integer"
+                          },
+                          "days_to_ready": {
+                            "type": "integer",
+                            "nullable": true
+                          },
+                          "ready_by_date": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "total_attempts": {
+                            "type": "integer"
+                          },
+                          "total_correct": {
+                            "type": "integer"
+                          },
+                          "improvement_rate_per_week": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "avg_time_seconds": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "last_practiced": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          }
+                        },
+                        "required": [
+                          "section",
+                          "overall_accuracy",
+                          "recent_accuracy",
+                          "readiness_percentage",
+                          "current_theta",
+                          "target_theta",
+                          "predicted_score_low",
+                          "predicted_score_high",
+                          "total_attempts",
+                          "total_correct"
+                        ]
+                      }
+                    },
+                    "tps_readiness": {
+                      "type": "number"
+                    },
+                    "literasi_readiness": {
+                      "type": "number"
+                    },
+                    "weakest_section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"],
+                      "nullable": true
+                    },
+                    "strongest_section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"],
+                      "nullable": true
+                    },
+                    "recommended_practice": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"],
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "overall_readiness",
+                    "total_attempts",
+                    "total_correct",
+                    "overall_accuracy",
+                    "section_readiness",
+                    "tps_readiness",
+                    "literasi_readiness"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/readiness/{section}": {
+      "get": {
+        "description": "Get detailed readiness for a specific UTBK section including subtype breakdown and trends",
+        "summary": "Get section readiness detail",
+        "tags": ["Readiness"],
+        "parameters": [
+          {
+            "name": "section",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+            }
+          }
+        ],
+        "operationId": "getSectionReadiness",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+                    },
+                    "overall_accuracy": {
+                      "type": "number"
+                    },
+                    "recent_accuracy": {
+                      "type": "number"
+                    },
+                    "readiness_percentage": {
+                      "type": "number"
+                    },
+                    "current_theta": {
+                      "type": "number"
+                    },
+                    "target_theta": {
+                      "type": "number"
+                    },
+                    "predicted_score_low": {
+                      "type": "integer"
+                    },
+                    "predicted_score_high": {
+                      "type": "integer"
+                    },
+                    "days_to_ready": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "ready_by_date": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "total_attempts": {
+                      "type": "integer"
+                    },
+                    "total_correct": {
+                      "type": "integer"
+                    },
+                    "improvement_rate_per_week": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "avg_time_seconds": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "last_practiced": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "subtype_breakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sub_type": {
+                            "type": "string"
+                          },
+                          "total_attempts": {
+                            "type": "integer"
+                          },
+                          "correct_count": {
+                            "type": "integer"
+                          },
+                          "accuracy": {
+                            "type": "number"
+                          },
+                          "is_weak_area": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "sub_type",
+                          "total_attempts",
+                          "correct_count",
+                          "accuracy",
+                          "is_weak_area"
+                        ]
+                      }
+                    },
+                    "accuracy_trend": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date": {
+                            "type": "string"
+                          },
+                          "accuracy": {
+                            "type": "number"
+                          },
+                          "attempts": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": ["date", "accuracy", "attempts"]
+                      }
+                    },
+                    "next_steps": {
+                      "type": "object",
+                      "properties": {
+                        "is_ready": {
+                          "type": "boolean"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "estimated_completion_date": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "suggested_daily_practice": {
+                          "type": "integer",
+                          "nullable": true
+                        }
+                      },
+                      "required": ["is_ready", "message"],
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "section",
+                    "overall_accuracy",
+                    "recent_accuracy",
+                    "readiness_percentage",
+                    "current_theta",
+                    "target_theta",
+                    "predicted_score_low",
+                    "predicted_score_high",
+                    "total_attempts",
+                    "total_correct"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "description": "Update target theta for a specific section",
+        "summary": "Update section readiness settings",
+        "tags": ["Readiness"],
+        "parameters": [
+          {
+            "name": "section",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+            }
+          }
+        ],
+        "operationId": "updateSectionReadiness",
+        "requestBody": {
+          "description": "Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target_theta": {
+                    "type": "number",
+                    "minimum": -3,
+                    "maximum": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "section": {
+                      "type": "string",
+                      "enum": ["PU", "PPU", "PBM", "PK", "LBI", "LBE", "PM"]
+                    },
+                    "overall_accuracy": {
+                      "type": "number"
+                    },
+                    "recent_accuracy": {
+                      "type": "number"
+                    },
+                    "readiness_percentage": {
+                      "type": "number"
+                    },
+                    "current_theta": {
+                      "type": "number"
+                    },
+                    "target_theta": {
+                      "type": "number"
+                    },
+                    "predicted_score_low": {
+                      "type": "integer"
+                    },
+                    "predicted_score_high": {
+                      "type": "integer"
+                    },
+                    "days_to_ready": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "ready_by_date": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "total_attempts": {
+                      "type": "integer"
+                    },
+                    "total_correct": {
+                      "type": "integer"
+                    },
+                    "improvement_rate_per_week": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "avg_time_seconds": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "last_practiced": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "section",
+                    "overall_accuracy",
+                    "recent_accuracy",
+                    "readiness_percentage",
+                    "current_theta",
+                    "target_theta",
+                    "predicted_score_low",
+                    "predicted_score_high",
+                    "total_attempts",
+                    "total_correct"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "info": {

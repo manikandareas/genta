@@ -10,12 +10,13 @@ import (
 )
 
 type Services struct {
-	Auth     *AuthService
-	Job      *job.JobService
-	User     *UserService
-	Question *QuestionService
-	Attempt  *AttemptService
-	Session  *SessionService
+	Auth      *AuthService
+	Job       *job.JobService
+	User      *UserService
+	Question  *QuestionService
+	Attempt   *AttemptService
+	Session   *SessionService
+	Readiness *ReadinessService
 }
 
 func NewServices(s *server.Server, repos *repository.Repositories) (*Services, error) {
@@ -30,13 +31,15 @@ func NewServices(s *server.Server, repos *repository.Repositories) (*Services, e
 	questionService := NewQuestionService(s, repos.Question, repos.User)
 	attemptService := NewAttemptService(s, repos.Attempt, repos.Question, repos.User)
 	sessionService := NewSessionService(s, repos.Session, repos.User)
+	readinessService := NewReadinessService(s, repos.Readiness, repos.User)
 
 	return &Services{
-		Job:      s.Job,
-		Auth:     authService,
-		User:     userService,
-		Question: questionService,
-		Attempt:  attemptService,
-		Session:  sessionService,
+		Job:       s.Job,
+		Auth:      authService,
+		User:      userService,
+		Question:  questionService,
+		Attempt:   attemptService,
+		Session:   sessionService,
+		Readiness: readinessService,
 	}, nil
 }

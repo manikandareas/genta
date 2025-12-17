@@ -6,31 +6,55 @@ import (
 	"github.com/google/uuid"
 )
 
+// UserReadiness represents the user_readiness table entity
 type UserReadiness struct {
 	UserID  uuid.UUID `json:"userId" db:"user_id"`
 	Section string    `json:"section" db:"section"`
 
+	// Recent stats (last 30 days or configurable window)
 	RecentAttemptsCount int      `json:"recentAttemptsCount" db:"recent_attempts_count"`
 	RecentCorrectCount  int      `json:"recentCorrectCount" db:"recent_correct_count"`
 	RecentAccuracy      *float64 `json:"recentAccuracy" db:"recent_accuracy"`
 
+	// Overall stats (all time)
 	TotalAttemptsCount int      `json:"totalAttemptsCount" db:"total_attempts_count"`
 	TotalCorrectCount  int      `json:"totalCorrectCount" db:"total_correct_count"`
 	OverallAccuracy    *float64 `json:"overallAccuracy" db:"overall_accuracy"`
 
+	// IRT-based metrics
 	CurrentTheta        *float64 `json:"currentTheta" db:"current_theta"`
 	TargetTheta         *float64 `json:"targetTheta" db:"target_theta"`
 	ReadinessPercentage *float64 `json:"readinessPercentage" db:"readiness_percentage"`
 
+	// Predictions
 	PredictedScoreLow  *int       `json:"predictedScoreLow" db:"predicted_score_low"`
 	PredictedScoreHigh *int       `json:"predictedScoreHigh" db:"predicted_score_high"`
 	ReadyByDate        *time.Time `json:"readyByDate" db:"ready_by_date"`
 
+	// Progress tracking
 	ImprovementRatePerWeek *float64 `json:"improvementRatePerWeek" db:"improvement_rate_per_week"`
 	DaysToReady            *int     `json:"daysToReady" db:"days_to_ready"`
 
+	// Metadata
 	LastUpdated    *time.Time `json:"lastUpdated" db:"last_updated"`
 	UpdatedByJobID *string    `json:"updatedByJobId" db:"updated_by_job_id"`
+}
+
+// SubtypeAccuracy represents accuracy breakdown by question subtype
+type SubtypeAccuracy struct {
+	SubType       string  `json:"sub_type" db:"sub_type"`
+	TotalAttempts int     `json:"total_attempts" db:"total_attempts"`
+	CorrectCount  int     `json:"correct_count" db:"correct_count"`
+	Accuracy      float64 `json:"accuracy"`
+}
+
+// UserReadinessWithStats extends UserReadiness with computed stats
+type UserReadinessWithStats struct {
+	UserReadiness
+
+	// Computed fields (not in DB, calculated at query time)
+	AvgTimeSeconds *float64   `json:"avgTimeSeconds" db:"avg_time_seconds"`
+	LastPracticed  *time.Time `json:"lastPracticed" db:"last_practiced"`
 }
 
 // SectionReadiness represents readiness data for API response
