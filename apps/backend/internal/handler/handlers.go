@@ -14,6 +14,7 @@ type Handlers struct {
 	Session   *SessionHandler
 	Readiness *ReadinessHandler
 	Analytics *AnalyticsHandler
+	Job       *JobHandler
 }
 
 func NewHandlers(s *server.Server, services *service.Services) *Handlers {
@@ -26,5 +27,6 @@ func NewHandlers(s *server.Server, services *service.Services) *Handlers {
 		Session:   NewSessionHandler(s, services.Session),
 		Readiness: NewReadinessHandler(s, services.Readiness),
 		Analytics: NewAnalyticsHandler(s, services.Analytics),
+		Job:       NewJobHandler(s, services.Job),
 	}
 }

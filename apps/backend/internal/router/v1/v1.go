@@ -24,4 +24,7 @@ func RegisterV1Routes(router *echo.Group, handlers *handler.Handlers, middleware
 
 	// analytics routes
 	registerAnalyticsRoutes(router, handlers.Analytics, middleware.Auth)
+
+	// job routes
+	registerJobRoutes(router, handlers.Job, middleware.Auth)
 }

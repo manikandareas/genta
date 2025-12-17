@@ -2759,6 +2759,112 @@
           }
         ]
       }
+    },
+    "/api/v1/jobs/{job_id}/check": {
+      "post": {
+        "description": "Check the status of an async job (feedback generation, etc). Returns 200 for completed jobs, 202 for processing jobs.",
+        "summary": "Check async job status",
+        "tags": ["Job"],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "operationId": "checkJobStatus",
+        "requestBody": {
+          "description": "Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["queued", "processing", "completed", "failed"]
+                    },
+                    "attempt_id": {
+                      "type": "string"
+                    },
+                    "estimated_completion_seconds": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["job_id", "status"],
+                  "description": "Job completed"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Job still processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["queued", "processing", "completed", "failed"]
+                    },
+                    "attempt_id": {
+                      "type": "string"
+                    },
+                    "estimated_completion_seconds": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["job_id", "status"],
+                  "description": "Job still processing"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "info": {
