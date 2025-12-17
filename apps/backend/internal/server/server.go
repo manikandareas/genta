@@ -54,6 +54,7 @@ func New(cfg *config.Config, logger *zerolog.Logger, loggerService *loggerPkg.Lo
 	// job service
 	jobService := job.NewJobService(logger, cfg)
 	jobService.InitHandlers(cfg, logger)
+	jobService.SetDatabase(db)
 
 	// Start job server
 	if err := jobService.Start(); err != nil {

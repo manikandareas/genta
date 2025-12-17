@@ -21,7 +21,7 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/nrpkgerrors v1.1.0
 	github.com/newrelic/go-agent/v3/integrations/nrredis-v9 v1.1.1
 	github.com/pkg/errors v0.9.1
-	github.com/redis/go-redis/v9 v9.7.0
+	github.com/redis/go-redis/v9 v9.7.3
 	github.com/resend/resend-go/v2 v2.21.0
 	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.10.0
@@ -89,6 +89,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
+	github.com/sashabaranov/go-openai v1.41.2 // indirect
 	github.com/shirou/gopsutil/v4 v4.25.5 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
