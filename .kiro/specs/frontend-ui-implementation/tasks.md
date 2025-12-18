@@ -79,12 +79,12 @@
 - [ ] 5. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Implement Practice Session Feature
-  - [ ] 6.1 Create practice types and mock data
+- [x] 6. Implement Practice Session Feature
+  - [x] 6.1 Create practice types and mock data
     - Define `PracticeSessionState`, `Question`, `Attempt` interfaces
     - Create mock questions and session data
     - _Requirements: 3.3_
-  - [ ] 6.2 Implement practice session components
+  - [x] 6.2 Implement practice session components
     - Create `session-header.tsx` with timer, progress, section badge
     - Create `question-card.tsx` for question text display
     - Create `answer-options.tsx` with radio buttons A-E
@@ -93,7 +93,7 @@
     - Create `feedback-panel.tsx` with AI feedback and rating buttons
     - Create `session-summary.tsx` for end of session stats
     - _Requirements: 3.3, 3.5, 3.7, 3.8, 3.11_
-  - [ ] 6.3 Implement practice API hooks
+  - [x] 6.3 Implement practice API hooks
     - Create `use-session.ts` hook for POST /api/v1/sessions and PUT /api/v1/sessions/:id/end
     - Create `use-next-question.ts` hook for GET /api/v1/questions/next
     - Create `use-attempt.ts` hook for POST /api/v1/attempts
@@ -112,7 +112,7 @@
   - [ ]\* 6.7 Write property test for feedback rating
     - **Property 9: Feedback rating submission**
     - **Validates: Requirements 3.9**
-  - [ ] 6.8 Create practice session page routes
+  - [x] 6.8 Create practice session page routes
     - Create `app/practice/page.tsx` for section selection
     - Create `app/practice/session/[sessionId]/page.tsx` for active session
     - Implement session flow with question navigation
