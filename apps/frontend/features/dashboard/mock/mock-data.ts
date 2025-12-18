@@ -1,32 +1,41 @@
 import type { DashboardData, HeatmapEntry } from "../types";
 
+// Simple seeded pseudo-random number generator for deterministic results
+function seededRandom(seed: number): () => number {
+  return function () {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    return seed / 0x7fffffff;
+  };
+}
+
 function generateMockHeatmap(): HeatmapEntry[] {
   const heatmap: HeatmapEntry[] = [];
   const startDate = new Date("2025-01-01");
   const endDate = new Date("2025-12-31");
+  const random = seededRandom(42); // Fixed seed for deterministic results
 
   const currentDate = new Date(startDate);
   while (currentDate <= endDate) {
     const dayOfWeek = currentDate.getDay();
     const isWeekday = dayOfWeek !== 0 && dayOfWeek !== 6;
-    const random = Math.random();
+    const rand = random();
 
     let level: 0 | 1 | 2 | 3 | 4 = 0;
     let count = 0;
 
-    if (isWeekday && random > 0.3) {
-      if (random > 0.9) {
+    if (isWeekday && rand > 0.3) {
+      if (rand > 0.9) {
         level = 4;
-        count = Math.floor(Math.random() * 10) + 16;
-      } else if (random > 0.7) {
+        count = Math.floor(random() * 10) + 16;
+      } else if (rand > 0.7) {
         level = 3;
-        count = Math.floor(Math.random() * 9) + 6;
-      } else if (random > 0.5) {
+        count = Math.floor(random() * 9) + 6;
+      } else if (rand > 0.5) {
         level = 2;
-        count = Math.floor(Math.random() * 5) + 1;
+        count = Math.floor(random() * 5) + 1;
       } else {
         level = 1;
-        count = Math.floor(Math.random() * 5) + 1;
+        count = Math.floor(random() * 5) + 1;
       }
     }
 

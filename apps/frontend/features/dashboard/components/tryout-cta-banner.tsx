@@ -7,16 +7,23 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { CountdownData } from "../types";
+import type { User } from "@genta/zod";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TryoutCtaBannerProps {
-  countdown: CountdownData;
+  user: User | null;
+  isLoading?: boolean;
 }
 
-function useCountdown(targetDate: string) {
+function useCountdown(targetDate: string | null) {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
+    if (!targetDate) {
+      setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+      return;
+    }
+
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
       const target = new Date(targetDate).getTime();
@@ -42,8 +49,22 @@ function useCountdown(targetDate: string) {
   return timeLeft;
 }
 
-export function TryoutCtaBanner({ countdown }: TryoutCtaBannerProps) {
-  const timeLeft = useCountdown(countdown.exam_date);
+export function TryoutCtaBanner({ user, isLoading }: TryoutCtaBannerProps) {
+  const timeLeft = useCountdown(user?.examDate ?? null);
+
+  if (isLoading) {
+    return (
+      <div className="relative flex min-h-[280px] overflow-hidden rounded-2xl bg-muted/50">
+        <div className="flex flex-1 flex-col justify-center gap-6 p-8 md:p-10">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-80" />
+            <Skeleton className="h-5 w-64" />
+          </div>
+          <Skeleton className="h-12 w-40 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div

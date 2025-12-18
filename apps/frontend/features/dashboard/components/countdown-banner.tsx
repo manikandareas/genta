@@ -11,18 +11,50 @@ import {
 } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import NumberFlow from "@number-flow/react";
-import type { CountdownData } from "../types";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { User } from "@genta/zod";
 
 interface CountdownBannerProps {
-  countdown: CountdownData;
+  user: User | null;
+  isLoading?: boolean;
 }
 
-export function CountdownBanner({ countdown }: CountdownBannerProps) {
-  const formattedDate = new Date(countdown.exam_date).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+function calculateDaysRemaining(examDate: string | null): number {
+  if (!examDate) return 0;
+  const exam = new Date(examDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  exam.setHours(0, 0, 0, 0);
+  const diffTime = exam.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(0, diffDays);
+}
+
+export function CountdownBanner({ user, isLoading }: CountdownBannerProps) {
+  if (isLoading) {
+    return (
+      <div className="relative col-span-1 flex h-64 flex-col justify-between overflow-hidden rounded-lg p-6 md:col-span-2 lg:col-span-3 bg-muted/50">
+        <Skeleton className="h-16 w-32" />
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-4">
+            <Skeleton className="h-8 w-24 rounded-lg" />
+            <Skeleton className="h-8 w-20 rounded-lg" />
+            <Skeleton className="h-8 w-28 rounded-lg" />
+          </div>
+          <Skeleton className="h-12 w-48 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
+  const daysRemaining = calculateDaysRemaining(user?.examDate ?? null);
+  const formattedDate = user?.examDate
+    ? new Date(user.examDate).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "Belum diatur";
 
   return (
     <motion.div
@@ -40,7 +72,7 @@ export function CountdownBanner({ countdown }: CountdownBannerProps) {
 
       <div className="flex items-baseline gap-2">
         <NumberFlow
-          value={countdown.days_remaining}
+          value={daysRemaining}
           className="font-playfair-display text-6xl font-bold tracking-tighter"
           format={{ useGrouping: false }}
         />
@@ -51,11 +83,11 @@ export function CountdownBanner({ countdown }: CountdownBannerProps) {
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
             <HugeiconsIcon icon={GraduationScrollIcon} className="size-4" />
-            <span className="font-medium">{countdown.target_ptn}</span>
+            <span className="font-medium">{user?.targetPtn || "Belum diatur"}</span>
           </div>
           <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
             <HugeiconsIcon icon={Target02Icon} className="size-4" />
-            <span className="font-medium">{countdown.target_score}</span>
+            <span className="font-medium">{user?.targetScore || "-"}</span>
           </div>
           <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
             <HugeiconsIcon icon={Calendar03Icon} className="size-4" />

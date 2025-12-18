@@ -47,13 +47,13 @@
 - [x] 3. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 4. Enhance Dashboard Feature with Real API Integration
-  - [ ] 4.1 Create dashboard API hooks
+- [x] 4. Enhance Dashboard Feature with Real API Integration
+  - [x] 4.1 Create dashboard API hooks
     - Create `use-readiness.ts` hook calling GET /api/v1/readiness
     - Create `use-user.ts` hook calling GET /api/v1/users/me
     - Create `use-analytics.ts` hook calling GET /api/v1/analytics/progress
     - _Requirements: 2.2, 2.1_
-  - [ ] 4.2 Update dashboard components to use real data
+  - [x] 4.2 Update dashboard components to use real data
     - Update `welcome-header.tsx` to use user data from API
     - Update `tps-readiness-card.tsx` to use readiness API data
     - Update `literasi-readiness-card.tsx` to use readiness API data
@@ -66,12 +66,12 @@
   - [ ]\* 4.4 Write property test for countdown calculation
     - **Property 5: Countdown calculation accuracy**
     - **Validates: Requirements 2.8**
-  - [ ] 4.5 Add loading and error states to dashboard
+  - [x] 4.5 Add loading and error states to dashboard
     - Add skeleton loaders for all cards
     - Add error handling with retry buttons
     - Add empty states for new users
     - _Requirements: 7.1, 7.4, 7.6_
-  - [ ] 4.6 Update dashboard page to fetch real data
+  - [x] 4.6 Update dashboard page to fetch real data
     - Update `app/dashboard/page.tsx` to use API hooks
     - Add onboarding redirect check
     - _Requirements: 2.2, 1.1_

@@ -12,3 +12,5 @@ export { ActivityChart } from "./activity-chart";
 export { StatsActivityCard } from "./stats-activity-card";
 export { QuickActions } from "./quick-actions";
 export { TryoutCtaBanner } from "./tryout-cta-banner";
+export { DashboardError } from "./dashboard-error";
+export { DashboardEmpty } from "./dashboard-empty";

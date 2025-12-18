@@ -17,11 +17,10 @@ import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { UserButton } from "@clerk/nextjs";
-import type { User, Notifications } from "../types";
+import type { User } from "@genta/zod";
 
 interface NavbarProps {
-  user: User;
-  notifications: Notifications;
+  user?: User | null;
 }
 
 const navItems = [
@@ -31,7 +30,7 @@ const navItems = [
   { href: "/settings", label: "Settings", icon: Settings01Icon },
 ];
 
-export function Navbar({ user }: NavbarProps) {
+export function Navbar({ user: _user }: NavbarProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
 

@@ -4,17 +4,35 @@ import { motion } from "motion/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Fire02Icon } from "@hugeicons/core-free-icons";
 import NumberFlow from "@number-flow/react";
-import type { WelcomeData } from "../types";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { User } from "@genta/zod";
 
 interface WelcomeHeaderProps {
-  welcome: WelcomeData;
+  user: User | null;
+  streakDays?: number;
+  isLoading?: boolean;
 }
 
-export function WelcomeHeader({ welcome }: WelcomeHeaderProps) {
+export function WelcomeHeader({ user, streakDays = 0, isLoading }: WelcomeHeaderProps) {
+  if (isLoading) {
+    return (
+      <section className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-3">
+          <Skeleton className="h-5 w-48" />
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+        <Skeleton className="h-16 w-32 rounded-xl" />
+      </section>
+    );
+  }
+
+  const displayName = user?.fullName?.split(" ")[0] || "User";
+
   return (
     <section className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
       <div className="space-y-3">
-        <p className="text-muted-foreground text-sm">Selamat Datang, {welcome.full_name} 👋</p>
+        <p className="text-muted-foreground text-sm">Selamat Datang, {displayName} 👋</p>
         <div className="inline-flex items-baseline gap-1">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
             Ayo Mulai
@@ -39,7 +57,7 @@ export function WelcomeHeader({ welcome }: WelcomeHeaderProps) {
         </div>
         <div className="flex flex-col">
           <NumberFlow
-            value={welcome.streak_days}
+            value={streakDays}
             className="text-2xl font-bold tabular-nums"
             transformTiming={{ duration: 500, easing: "ease-out" }}
             spinTiming={{ duration: 500, easing: "ease-out" }}

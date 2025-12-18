@@ -5,13 +5,35 @@ import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Book02Icon } from "@hugeicons/core-free-icons";
 import NumberFlow from "@number-flow/react";
-import type { LiterasiReadiness } from "../types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LiterasiReadinessCardProps {
-  literasi: LiterasiReadiness;
+  literasiReadiness: number;
+  isLoading?: boolean;
 }
 
-export function LiterasiReadinessCard({ literasi }: LiterasiReadinessCardProps) {
+export function LiterasiReadinessCard({
+  literasiReadiness,
+  isLoading,
+}: LiterasiReadinessCardProps) {
+  if (isLoading) {
+    return (
+      <motion.div className="col-span-1">
+        <Card className="h-full border bg-card/50 shadow-none">
+          <CardContent className="flex h-full flex-col justify-between p-4">
+            <div className="flex items-center justify-between">
+              <Skeleton className="size-8 rounded-lg" />
+              <Skeleton className="h-4 w-12" />
+            </div>
+            <div className="mt-3">
+              <Skeleton className="h-8 w-16" />
+              <Skeleton className="mt-1 h-3 w-12" />
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
   return (
     <motion.div
       className="col-span-1"
@@ -32,7 +54,7 @@ export function LiterasiReadinessCard({ literasi }: LiterasiReadinessCardProps) 
           <div className="mt-3">
             <div className="flex items-baseline gap-0.5">
               <NumberFlow
-                value={literasi.overall_percentage}
+                value={Math.round(literasiReadiness)}
                 className="text-2xl font-bold tracking-tight"
               />
               <span className="text-sm text-muted-foreground">%</span>
