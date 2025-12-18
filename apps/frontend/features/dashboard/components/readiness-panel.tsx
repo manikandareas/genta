@@ -59,7 +59,7 @@ export function ReadinessPanel({ tps, literasi, overall }: ReadinessPanelProps) 
           <div className="flex flex-1 flex-col gap-2">
             {/* TPS */}
             <Link
-              href="/practice?section=tps"
+              href="/readiness/PU"
               className="group flex flex-1 items-center justify-between rounded-lg bg-muted/30 px-3 py-2 transition-colors hover:bg-muted/50"
             >
               <div className="flex items-center gap-2">
@@ -82,7 +82,7 @@ export function ReadinessPanel({ tps, literasi, overall }: ReadinessPanelProps) 
 
             {/* Literasi */}
             <Link
-              href="/practice?section=literasi"
+              href="/readiness/LBI"
               className="group flex flex-1 items-center justify-between rounded-lg bg-muted/30 px-3 py-2 transition-colors hover:bg-muted/50"
             >
               <div className="flex items-center gap-2">
