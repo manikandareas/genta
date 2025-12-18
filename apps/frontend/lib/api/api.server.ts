@@ -2,13 +2,31 @@ import { apiContract } from "@genta/openapi/contracts";
 import { auth } from "@clerk/nextjs/server";
 import { initClient } from "@ts-rest/core";
 import axios, { type Method, type AxiosError, isAxiosError, type AxiosResponse } from "axios";
+import { redirect } from "next/navigation";
 import { env } from "../env";
 
 type Headers = Awaited<ReturnType<NonNullable<Parameters<typeof initClient>[1]["api"]>>>["headers"];
 
 export type TServerApiClient = ReturnType<typeof createServerApiClient>;
 
-export const createServerApiClient = async ({ isBlob = false }: { isBlob?: boolean } = {}) => {
+/**
+ * Options for the server API client
+ */
+interface CreateServerApiClientOptions {
+  /** Whether to expect blob response */
+  isBlob?: boolean;
+  /** Whether to automatically redirect on 401 errors (default: true) */
+  redirectOnUnauthorized?: boolean;
+}
+
+/**
+ * Create a type-safe API client for server-side usage
+ * Automatically handles 401 errors by redirecting to sign-in
+ */
+export const createServerApiClient = async ({
+  isBlob = false,
+  redirectOnUnauthorized = true,
+}: CreateServerApiClientOptions = {}) => {
   const { getToken } = await auth();
 
   return initClient(apiContract, {
@@ -43,8 +61,14 @@ export const createServerApiClient = async ({ isBlob = false }: { isBlob?: boole
             const error = e as AxiosError;
             const response = error.response as AxiosResponse;
 
-            if (response?.status === 401 && retryCount < 2) {
+            // If unauthorized and we haven't retried yet, retry once
+            if (response?.status === 401 && retryCount < 1) {
               return makeRequest(retryCount + 1);
+            }
+
+            // If still unauthorized after retry, redirect to sign-in
+            if (response?.status === 401 && redirectOnUnauthorized) {
+              redirect("/sign-in");
             }
 
             return {

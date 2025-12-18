@@ -224,17 +224,17 @@
 - [ ] 13. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 14. Implement Error Handling and Loading States
-  - [ ] 14.1 Create shared loading components
+- [x] 14. Implement Error Handling and Loading States
+  - [x] 14.1 Create shared loading components
     - Create skeleton components for cards, tables, charts
     - Create spinner component for buttons
     - _Requirements: 7.1_
-  - [ ] 14.2 Create shared error components
+  - [x] 14.2 Create shared error components
     - Create error boundary component
     - Create retry button component
     - Create empty state component
     - _Requirements: 7.4, 7.6_
-  - [ ] 14.3 Implement 401 redirect handling
+  - [x] 14.3 Implement 401 redirect handling
     - Add 401 interceptor to API client
     - Redirect to sign-in on unauthorized
     - _Requirements: 7.2_
