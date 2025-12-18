@@ -192,21 +192,21 @@
 - [ ] 11. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 12. Implement Settings Feature
-  - [ ] 12.1 Create settings types
+- [x] 12. Implement Settings Feature
+  - [x] 12.1 Create settings types
     - Define `ProfileFormData`, `GoalsFormData`, `Preferences` interfaces
     - _Requirements: 6.1_
-  - [ ] 12.2 Implement settings components
+  - [x] 12.2 Implement settings components
     - Create `profile-section.tsx` with avatar, name, email display
     - Create `goals-section.tsx` with editable target PTN, score, exam date
     - Create `preferences-section.tsx` with theme toggle (light/dark/system)
     - Create `subscription-section.tsx` with plan status display
     - _Requirements: 6.1, 6.3, 6.4, 6.6_
-  - [ ] 12.3 Implement settings API hooks
+  - [x] 12.3 Implement settings API hooks
     - Create `use-profile.ts` hook for GET /api/v1/users/me
     - Create `use-update-profile.ts` hook for PUT /api/v1/users/me
     - _Requirements: 6.1, 6.2_
-  - [ ] 12.4 Implement theme persistence
+  - [x] 12.4 Implement theme persistence
     - Create `use-theme.ts` hook with localStorage persistence
     - Apply theme to document root
     - _Requirements: 6.4, 6.5_
@@ -216,7 +216,7 @@
   - [ ]\* 12.6 Write property test for theme persistence
     - **Property 19: Theme persistence**
     - **Validates: Requirements 6.4, 6.5**
-  - [ ] 12.7 Create settings page route
+  - [x] 12.7 Create settings page route
     - Create `app/settings/page.tsx` with all sections
     - Implement form submission with validation
     - _Requirements: 6.1, 6.2, 6.3_

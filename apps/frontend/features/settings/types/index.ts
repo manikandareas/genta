@@ -9,7 +9,7 @@ export interface ProfileFormData {
 export interface GoalsFormData {
   targetPtn: string;
   targetScore: number;
-  examDate: Date;
+  examDate: Date | null;
   studyHoursPerWeek: number;
 }
 
@@ -18,3 +18,20 @@ export interface Preferences {
 }
 
 export type Theme = "light" | "dark" | "system";
+
+export interface SubscriptionInfo {
+  tier: string;
+  isActive: boolean;
+  startDate: string | null;
+  endDate: string | null;
+}
+
+export interface SettingsFormData {
+  profile: ProfileFormData;
+  goals: GoalsFormData;
+  preferences: Preferences;
+}
+
+export interface SettingsPageProps {
+  initialData?: SettingsFormData;
+}
