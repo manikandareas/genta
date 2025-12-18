@@ -1,0 +1,260 @@
+# Implementation Plan
+
+- [x] 1. Set up project structure and shared utilities
+  - [x] 1.1 Create feature folder structure for onboarding, practice, readiness, analytics, settings
+    - Create `features/onboarding/`, `features/practice/`, `features/readiness/`, `features/analytics/`, `features/settings/` with `components/`, `hooks/`, `types/`, `mock/` subfolders
+    - Create `index.ts` barrel files for each feature
+    - _Requirements: 10.1, 10.3_
+  - [x] 1.2 Set up shared API hooks and error handling utilities
+    - Create `lib/api/error-handler.ts` for consistent error handling
+    - Create shared query key constants
+    - _Requirements: 9.4, 7.2, 7.3, 7.4_
+  - [ ]\* 1.3 Write property test for error handling consistency
+    - **Property 22: Error handling consistency**
+    - **Validates: Requirements 9.4**
+
+- [x] 2. Implement Onboarding Feature
+  - [x] 2.1 Create onboarding types and mock data
+    - Define `OnboardingFormData` interface in `features/onboarding/types/index.ts`
+    - Create mock data for testing in `features/onboarding/mock/mock-data.ts`
+    - _Requirements: 1.2_
+  - [x] 2.2 Implement onboarding form components
+    - Create `step-indicator.tsx` for progress display
+    - Create `ptn-selector.tsx` with university dropdown
+    - Create `score-slider.tsx` for target score (550-750)
+    - Create `date-picker.tsx` for exam date selection
+    - Create `onboarding-form.tsx` as main 2-step form
+    - _Requirements: 1.2, 1.4_
+  - [x] 2.3 Implement onboarding API hook and submission logic
+    - Create `use-onboarding.ts` hook calling POST /api/v1/users/onboarding
+    - Handle success redirect to dashboard
+    - Handle validation errors display
+    - _Requirements: 1.3, 1.5_
+  - [ ]\* 2.4 Write property test for onboarding redirect
+    - **Property 1: Onboarding redirect for incomplete users**
+    - **Validates: Requirements 1.1**
+  - [ ]\* 2.5 Write property test for valid onboarding submission
+    - **Property 2: Valid onboarding data submission**
+    - **Validates: Requirements 1.3**
+  - [ ]\* 2.6 Write property test for invalid onboarding rejection
+    - **Property 3: Invalid onboarding data rejection**
+    - **Validates: Requirements 1.4**
+  - [x] 2.7 Create onboarding page route
+    - Create `app/onboarding/page.tsx` with form integration
+    - Add redirect logic for users with `onboarding_completed: true`
+    - _Requirements: 1.1, 1.2_
+
+- [x] 3. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 4. Enhance Dashboard Feature with Real API Integration
+  - [ ] 4.1 Create dashboard API hooks
+    - Create `use-readiness.ts` hook calling GET /api/v1/readiness
+    - Create `use-user.ts` hook calling GET /api/v1/users/me
+    - Create `use-analytics.ts` hook calling GET /api/v1/analytics/progress
+    - _Requirements: 2.2, 2.1_
+  - [ ] 4.2 Update dashboard components to use real data
+    - Update `welcome-header.tsx` to use user data from API
+    - Update `tps-readiness-card.tsx` to use readiness API data
+    - Update `literasi-readiness-card.tsx` to use readiness API data
+    - Update `overall-readiness-card.tsx` to use readiness API data
+    - Update `countdown-banner.tsx` to calculate from user's exam date
+    - _Requirements: 2.1, 2.3, 2.4, 2.5, 2.8_
+  - [ ]\* 4.3 Write property test for welcome header data display
+    - **Property 4: Welcome header displays user data**
+    - **Validates: Requirements 2.1**
+  - [ ]\* 4.4 Write property test for countdown calculation
+    - **Property 5: Countdown calculation accuracy**
+    - **Validates: Requirements 2.8**
+  - [ ] 4.5 Add loading and error states to dashboard
+    - Add skeleton loaders for all cards
+    - Add error handling with retry buttons
+    - Add empty states for new users
+    - _Requirements: 7.1, 7.4, 7.6_
+  - [ ] 4.6 Update dashboard page to fetch real data
+    - Update `app/dashboard/page.tsx` to use API hooks
+    - Add onboarding redirect check
+    - _Requirements: 2.2, 1.1_
+
+- [ ] 5. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 6. Implement Practice Session Feature
+  - [ ] 6.1 Create practice types and mock data
+    - Define `PracticeSessionState`, `Question`, `Attempt` interfaces
+    - Create mock questions and session data
+    - _Requirements: 3.3_
+  - [ ] 6.2 Implement practice session components
+    - Create `session-header.tsx` with timer, progress, section badge
+    - Create `question-card.tsx` for question text display
+    - Create `answer-options.tsx` with radio buttons A-E
+    - Create `submit-button.tsx` for answer submission
+    - Create `result-display.tsx` for correct/incorrect feedback
+    - Create `feedback-panel.tsx` with AI feedback and rating buttons
+    - Create `session-summary.tsx` for end of session stats
+    - _Requirements: 3.3, 3.5, 3.7, 3.8, 3.11_
+  - [ ] 6.3 Implement practice API hooks
+    - Create `use-session.ts` hook for POST /api/v1/sessions and PUT /api/v1/sessions/:id/end
+    - Create `use-next-question.ts` hook for GET /api/v1/questions/next
+    - Create `use-attempt.ts` hook for POST /api/v1/attempts
+    - Create `use-feedback-rating.ts` hook for PUT /api/v1/attempts/:id/feedback-rating
+    - Create `use-job-status.ts` hook for polling POST /api/v1/jobs/:id/check
+    - _Requirements: 3.1, 3.2, 3.4, 3.6, 3.9_
+  - [ ]\* 6.4 Write property test for question fetch with section
+    - **Property 6: Question fetch with correct section**
+    - **Validates: Requirements 3.2**
+  - [ ]\* 6.5 Write property test for attempt submission
+    - **Property 7: Attempt submission with correct data**
+    - **Validates: Requirements 3.4**
+  - [ ]\* 6.6 Write property test for result display
+    - **Property 8: Result display matches API response**
+    - **Validates: Requirements 3.5**
+  - [ ]\* 6.7 Write property test for feedback rating
+    - **Property 9: Feedback rating submission**
+    - **Validates: Requirements 3.9**
+  - [ ] 6.8 Create practice session page routes
+    - Create `app/practice/page.tsx` for section selection
+    - Create `app/practice/session/[sessionId]/page.tsx` for active session
+    - Implement session flow with question navigation
+    - _Requirements: 3.1, 3.2, 3.10, 3.11_
+
+- [ ] 7. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 8. Implement Readiness Detail Feature
+  - [ ] 8.1 Create readiness types and mock data
+    - Define `SectionReadiness`, `SubtypeBreakdown`, `AccuracyTrend` interfaces
+    - Create mock readiness detail data
+    - _Requirements: 4.2_
+  - [ ] 8.2 Implement readiness detail components
+    - Create `readiness-header.tsx` with section title and category badge
+    - Create `metrics-grid.tsx` with accuracy, readiness, score cards
+    - Create `theta-gauge.tsx` for current vs target visualization
+    - Create `accuracy-trend-chart.tsx` using Recharts line chart
+    - Create `subtype-breakdown.tsx` for question type accuracy
+    - Create `next-steps-card.tsx` with recommendations or congratulations
+    - _Requirements: 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8_
+  - [ ] 8.3 Implement readiness API hook
+    - Create `use-section-readiness.ts` hook for GET /api/v1/readiness/:section
+    - _Requirements: 4.1_
+  - [ ]\* 8.4 Write property test for readiness section fetch
+    - **Property 10: Readiness page fetches correct section**
+    - **Validates: Requirements 4.1**
+  - [ ]\* 8.5 Write property test for subtype breakdown display
+    - **Property 11: Subtype breakdown displays all types**
+    - **Validates: Requirements 4.5**
+  - [ ]\* 8.6 Write property test for days to ready calculation
+    - **Property 12: Days to ready calculation**
+    - **Validates: Requirements 4.6**
+  - [ ]\* 8.7 Write property test for conditional recommendation
+    - **Property 13: Conditional recommendation display (below 75%)**
+    - **Validates: Requirements 4.7**
+  - [ ]\* 8.8 Write property test for conditional congratulations
+    - **Property 14: Conditional congratulations display (75%+)**
+    - **Validates: Requirements 4.8**
+  - [ ] 8.9 Create readiness detail page route
+    - Create `app/readiness/[section]/page.tsx` with section parameter
+    - Add navigation from dashboard subtest cards
+    - _Requirements: 4.1, 2.9_
+
+- [ ] 9. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 10. Implement Analytics Feature
+  - [ ] 10.1 Create analytics types and mock data
+    - Define `ProgressAnalytics`, `AccuracyTrend`, `SectionBreakdown` interfaces
+    - Create mock analytics data
+    - _Requirements: 5.2_
+  - [ ] 10.2 Implement analytics components
+    - Create `time-range-filter.tsx` with period selector tabs (7, 30, 90 days)
+    - Create `overview-cards.tsx` with total questions, accuracy, streak
+    - Create `accuracy-trend-chart.tsx` using Recharts line chart
+    - Create `section-comparison-chart.tsx` using Recharts bar chart
+    - Create `performance-table.tsx` with sortable columns
+    - _Requirements: 5.2, 5.3, 5.4, 5.5_
+  - [ ] 10.3 Implement analytics API hook
+    - Create `use-progress.ts` hook for GET /api/v1/analytics/progress with days parameter
+    - _Requirements: 5.1, 5.6_
+  - [ ]\* 10.4 Write property test for analytics API call
+    - **Property 15: Analytics API call with days parameter**
+    - **Validates: Requirements 5.1**
+  - [ ]\* 10.5 Write property test for section chart completeness
+    - **Property 16: Section comparison chart completeness**
+    - **Validates: Requirements 5.4**
+  - [ ]\* 10.6 Write property test for time range refetch
+    - **Property 17: Time range filter refetch**
+    - **Validates: Requirements 5.6**
+  - [ ] 10.7 Create analytics page route
+    - Create `app/analytics/page.tsx` with time range filter
+    - Implement filter change handling with refetch
+    - _Requirements: 5.1, 5.6_
+
+- [ ] 11. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 12. Implement Settings Feature
+  - [ ] 12.1 Create settings types
+    - Define `ProfileFormData`, `GoalsFormData`, `Preferences` interfaces
+    - _Requirements: 6.1_
+  - [ ] 12.2 Implement settings components
+    - Create `profile-section.tsx` with avatar, name, email display
+    - Create `goals-section.tsx` with editable target PTN, score, exam date
+    - Create `preferences-section.tsx` with theme toggle (light/dark/system)
+    - Create `subscription-section.tsx` with plan status display
+    - _Requirements: 6.1, 6.3, 6.4, 6.6_
+  - [ ] 12.3 Implement settings API hooks
+    - Create `use-profile.ts` hook for GET /api/v1/users/me
+    - Create `use-update-profile.ts` hook for PUT /api/v1/users/me
+    - _Requirements: 6.1, 6.2_
+  - [ ] 12.4 Implement theme persistence
+    - Create `use-theme.ts` hook with localStorage persistence
+    - Apply theme to document root
+    - _Requirements: 6.4, 6.5_
+  - [ ]\* 12.5 Write property test for profile update
+    - **Property 18: Profile update submission**
+    - **Validates: Requirements 6.2**
+  - [ ]\* 12.6 Write property test for theme persistence
+    - **Property 19: Theme persistence**
+    - **Validates: Requirements 6.4, 6.5**
+  - [ ] 12.7 Create settings page route
+    - Create `app/settings/page.tsx` with all sections
+    - Implement form submission with validation
+    - _Requirements: 6.1, 6.2, 6.3_
+
+- [ ] 13. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 14. Implement Error Handling and Loading States
+  - [ ] 14.1 Create shared loading components
+    - Create skeleton components for cards, tables, charts
+    - Create spinner component for buttons
+    - _Requirements: 7.1_
+  - [ ] 14.2 Create shared error components
+    - Create error boundary component
+    - Create retry button component
+    - Create empty state component
+    - _Requirements: 7.4, 7.6_
+  - [ ] 14.3 Implement 401 redirect handling
+    - Add 401 interceptor to API client
+    - Redirect to sign-in on unauthorized
+    - _Requirements: 7.2_
+  - [ ]\* 14.4 Write property test for 401 redirect
+    - **Property 20: 401 error redirect**
+    - **Validates: Requirements 7.2**
+  - [ ]\* 14.5 Write property test for 400 error display
+    - **Property 21: 400 error field display**
+    - **Validates: Requirements 7.3**
+
+- [ ] 15. Implement Responsive Design
+  - [ ] 15.1 Add responsive styles to all components
+    - Update dashboard layout for mobile/tablet/desktop
+    - Update practice session layout for mobile
+    - Update analytics charts for smaller screens
+    - _Requirements: 8.1, 8.2, 8.3_
+  - [ ] 15.2 Add mobile navigation
+    - Create mobile menu component
+    - Add responsive navbar behavior
+    - _Requirements: 8.3_
+
+- [ ] 16. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

@@ -40,7 +40,7 @@ export function ActivityHeatmap({ activity }: ActivityHeatmapProps) {
     const adjustedStart = new Date(startDate);
     adjustedStart.setDate(startDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
-    let currentDate = new Date(adjustedStart);
+    const currentDate = new Date(adjustedStart);
     let currentWeek: Array<{ date: string; level: 0 | 1 | 2 | 3 | 4; isExamDate: boolean }> = [];
 
     while (currentDate <= endDate || currentWeek.length > 0) {

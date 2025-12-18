@@ -19,7 +19,9 @@ export const createServerApiClient = async ({ isBlob = false }: { isBlob?: boole
     api: async ({ path, method, headers, body }) => {
       const token = await getToken();
 
-      const makeRequest = async (retryCount = 0): Promise<any> => {
+      const makeRequest = async (
+        retryCount = 0,
+      ): Promise<{ status: number; body: unknown; headers: Headers }> => {
         try {
           const result = await axios.request({
             method: method as Method,
@@ -36,7 +38,7 @@ export const createServerApiClient = async ({ isBlob = false }: { isBlob?: boole
             body: result.data,
             headers: result.headers as unknown as Headers,
           };
-        } catch (e: Error | AxiosError | any) {
+        } catch (e: unknown) {
           if (isAxiosError(e)) {
             const error = e as AxiosError;
             const response = error.response as AxiosResponse;
