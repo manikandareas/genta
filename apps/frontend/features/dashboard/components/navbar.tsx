@@ -3,19 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Agreement02Icon,
-  Menu01Icon,
-  Home01Icon,
-  Target01Icon,
-  Analytics01Icon,
-  Settings01Icon,
-  AbsoluteIcon,
-} from "@hugeicons/core-free-icons";
-import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { AbsoluteIcon } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import type { User } from "@genta/zod";
 
@@ -24,15 +13,14 @@ interface NavbarProps {
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: Home01Icon },
-  { href: "/practice", label: "Practice", icon: Target01Icon },
-  { href: "/analytics", label: "Analytics", icon: Analytics01Icon },
-  { href: "/settings", label: "Settings", icon: Settings01Icon },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/practice", label: "Practice" },
+  { href: "/analytics", label: "Analytics" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function Navbar({ user: _user }: NavbarProps) {
   const pathname = usePathname();
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 h-14 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sm:h-16">
@@ -81,79 +69,6 @@ export function Navbar({ user: _user }: NavbarProps) {
               },
             }}
           />
-
-          {/* Mobile Menu - Full Screen Bottom Drawer */}
-          <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-            <DrawerTrigger asChild>
-              <Button variant="ghost" size="icon" className="size-9 md:hidden">
-                <HugeiconsIcon icon={Menu01Icon} strokeWidth={2} className="size-5" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent className="h-dvh max-h-dvh px-6">
-              <DrawerTitle className="sr-only">Menu</DrawerTitle>
-
-              {/* Logo */}
-              <div className="flex items-center gap-2 py-6">
-                <HugeiconsIcon
-                  icon={Agreement02Icon}
-                  strokeWidth={2}
-                  className="size-6 text-primary"
-                />
-                <span className="text-xl font-bold text-primary">GENTA</span>
-              </div>
-
-              {/* Navigation */}
-              <nav className="flex flex-col gap-1">
-                {navItems.map((item) => {
-                  const isActive =
-                    pathname === item.href ||
-                    (item.href !== "/dashboard" && pathname.startsWith(item.href));
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setDrawerOpen(false)}
-                      className={cn(
-                        "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-medium transition-all",
-                        isActive
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                      )}
-                    >
-                      <HugeiconsIcon
-                        icon={item.icon}
-                        strokeWidth={2}
-                        className={cn(
-                          "size-6",
-                          isActive ? "text-primary" : "text-muted-foreground",
-                        )}
-                      />
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </nav>
-
-              {/* User Info at Bottom */}
-              <div className="mt-auto border-t py-6">
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox: "size-12",
-                    },
-                  }}
-                  showName
-                  customMenuItems={[
-                    {
-                      label: "Analytics",
-                      href: "/analytics",
-                    },
-                  ]}
-                />
-              </div>
-            </DrawerContent>
-          </Drawer>
         </div>
       </div>
     </header>

@@ -24,21 +24,26 @@ function SectionCard({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={cn("text-left transition-all", disabled && "cursor-not-allowed opacity-50")}
+      className={cn("text-left transition-all w-full", disabled && "cursor-not-allowed opacity-50")}
     >
       <Card className="h-full hover:border-primary/50 hover:shadow-md transition-all">
-        <CardHeader className="pb-2">
+        <CardHeader className="p-3 pb-1 sm:p-6 sm:pb-2">
           <div className="flex items-center justify-between">
-            <span className="text-2xl">{section.icon}</span>
-            <Badge variant={section.category === "TPS" ? "default" : "secondary"}>
+            <span className="text-xl sm:text-2xl">{section.icon}</span>
+            <Badge
+              variant={section.category === "TPS" ? "default" : "secondary"}
+              className="text-[9px] px-1.5 py-0 sm:text-xs sm:px-2.5 sm:py-0.5"
+            >
               {section.category}
             </Badge>
           </div>
-          <CardTitle className="text-base">{section.name}</CardTitle>
-          <CardDescription className="text-xs">{section.id}</CardDescription>
+          <CardTitle className="text-sm sm:text-base">{section.name}</CardTitle>
+          <CardDescription className="text-[10px] sm:text-xs">{section.id}</CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground text-xs">{section.description}</p>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+          <p className="text-muted-foreground text-[10px] sm:text-xs line-clamp-2">
+            {section.description}
+          </p>
         </CardContent>
       </Card>
     </button>
@@ -50,14 +55,16 @@ export function SectionSelector({ onSelect, isLoading = false }: SectionSelector
   const literasiSections = SECTIONS.filter((s) => s.category === "Literasi");
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* TPS Section */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <div className="flex items-center gap-2">
-          <Badge variant="default">TPS</Badge>
-          <span className="text-muted-foreground text-sm">Tes Potensi Skolastik</span>
+          <Badge variant="default" className="text-[10px] sm:text-xs">
+            TPS
+          </Badge>
+          <span className="text-muted-foreground text-xs sm:text-sm">Tes Potensi Skolastik</span>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
           {tpsSections.map((section) => (
             <SectionCard
               key={section.id}
@@ -70,12 +77,14 @@ export function SectionSelector({ onSelect, isLoading = false }: SectionSelector
       </div>
 
       {/* Literasi Section */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <div className="flex items-center gap-2">
-          <Badge variant="secondary">Literasi</Badge>
-          <span className="text-muted-foreground text-sm">Literasi dan Penalaran</span>
+          <Badge variant="secondary" className="text-[10px] sm:text-xs">
+            Literasi
+          </Badge>
+          <span className="text-muted-foreground text-xs sm:text-sm">Literasi dan Penalaran</span>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-3">
           {literasiSections.map((section) => (
             <SectionCard
               key={section.id}

@@ -65,10 +65,10 @@ function CategoryCard({
   subtests,
 }: CategoryCardProps) {
   return (
-    <div className="flex-1 border-r border-border/30 last:border-r-0">
+    <div className="w-full border-b border-border/30 last:border-b-0 sm:w-auto sm:flex-1 sm:border-b-0 sm:border-r sm:last:border-r-0">
       <button
         onClick={onToggle}
-        className="flex w-full flex-col gap-1 p-4 transition-colors hover:bg-muted/30"
+        className="flex w-full flex-col gap-1 p-3 transition-colors hover:bg-muted/30 sm:p-4"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -171,7 +171,7 @@ function SimpleStatCard({
   const isPositive = change !== undefined && change >= 0;
 
   return (
-    <div className="flex flex-1 flex-col gap-1 border-r border-border/30 p-4 last:border-r-0">
+    <div className="flex w-1/2 flex-col gap-1 border-b border-r border-border/30 p-3 last:border-r-0 sm:w-auto sm:flex-1 sm:border-b-0 sm:p-4 [&:nth-child(even)]:border-r-0 sm:[&:nth-child(even)]:border-r sm:[&:nth-child(even)]:last:border-r-0">
       <div className="flex items-center gap-2">
         <div className={cn("flex size-6 items-center justify-center rounded-md", iconBg)}>
           <HugeiconsIcon icon={icon} className={cn("size-3.5", iconColor)} />
@@ -307,7 +307,7 @@ export function StatsActivityCard({ tps, literasi, overall, activity }: StatsAct
       </CardHeader>
       <CardContent className="px-0">
         {/* Grouped Stats Row */}
-        <div className="flex flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap">
           <CategoryCard
             label="TPS"
             icon={BrainIcon}
@@ -334,6 +334,41 @@ export function StatsActivityCard({ tps, literasi, overall, activity }: StatsAct
             }
             subtests={literasiSubtests}
           />
+          {/* Desktop only stats */}
+          <div className="hidden sm:contents">
+            <SimpleStatCard
+              label="Prediksi"
+              icon={Target02Icon}
+              iconColor="text-amber-500"
+              iconBg="bg-amber-500/10"
+              value={overall.predicted_score}
+              subtext={`target: ${overall.target_score}`}
+              change={(overall.gap / overall.target_score) * 100}
+            />
+            <SimpleStatCard
+              label="Latihan"
+              icon={Task01Icon}
+              iconColor="text-blue-500"
+              iconBg="bg-blue-500/10"
+              value={activity.stats.total_questions}
+              suffix=" soal"
+              subtext={`${activity.stats.avg_per_day} soal/hari`}
+            />
+            <SimpleStatCard
+              label="Akurasi"
+              icon={TargetIcon}
+              iconColor="text-rose-500"
+              iconBg="bg-rose-500/10"
+              value={activity.stats.overall_accuracy}
+              suffix="%"
+              subtext="minggu ini"
+              change={activity.stats.accuracy_change}
+            />
+          </div>
+        </div>
+
+        {/* Simple Stats Row for Mobile */}
+        <div className="flex flex-wrap border-t border-border/30 sm:hidden">
           <SimpleStatCard
             label="Prediksi"
             icon={Target02Icon}
@@ -365,9 +400,9 @@ export function StatsActivityCard({ tps, literasi, overall, activity }: StatsAct
         </div>
 
         {/* Heatmap Section */}
-        <div className="px-6 py-4">
-          <div className="overflow-x-auto">
-            <div className="w-full">
+        <div className="px-4 py-4 sm:px-6">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="min-w-[640px] sm:min-w-0 sm:w-full">
               {/* Month labels */}
               <div className="mb-2 flex pl-10">
                 {monthLabels.map((label, idx) => (

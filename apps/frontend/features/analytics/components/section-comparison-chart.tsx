@@ -63,29 +63,29 @@ export function SectionComparisonChart({ data, isLoading }: SectionComparisonCha
 
   return (
     <Card className="border bg-card/50 shadow-none">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">Perbandingan per Subtes</CardTitle>
-          <div className="flex items-center gap-4 text-xs">
-            <div className="flex items-center gap-1.5">
-              <div className="size-2.5 rounded-full bg-blue-500" />
+      <CardHeader className="pb-2 px-4 sm:px-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <CardTitle className="text-xs sm:text-sm font-medium">Perbandingan per Subtes</CardTitle>
+          <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs">
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <div className="size-2 sm:size-2.5 rounded-full bg-blue-500" />
               <span className="text-muted-foreground">TPS</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="size-2.5 rounded-full bg-emerald-500" />
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <div className="size-2 sm:size-2.5 rounded-full bg-emerald-500" />
               <span className="text-muted-foreground">Literasi</span>
             </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-2 sm:px-6">
         {chartData.every((d) => d.attempts === 0) ? (
-          <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
+          <div className="flex h-[200px] sm:h-[280px] items-center justify-center text-xs sm:text-sm text-muted-foreground">
             Belum ada data. Mulai latihan untuk melihat progresmu!
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-[280px] w-full">
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[280px] w-full">
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false} />
               <XAxis dataKey="section" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
               <YAxis

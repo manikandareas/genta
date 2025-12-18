@@ -10,7 +10,7 @@ import {
   SubscriptionSection,
 } from "@/features/settings";
 import { useProfile, useUpdateProfile, useTheme } from "@/features/settings/hooks";
-import { Navbar } from "@/features/dashboard/components/navbar";
+import { Navbar, MobileNav } from "@/features/dashboard/components";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -51,36 +51,43 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar />
-      <main className="container mx-auto px-4 py-6 max-w-2xl">
-        <div className="mb-6">
+      <main className="container mx-auto px-3 py-4 max-w-2xl sm:px-4 sm:py-6">
+        <div className="mb-4 sm:mb-6">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push("/dashboard")}
-            className="mb-4"
+            className="mb-3 sm:mb-4 -ml-2"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Kembali ke Dashboard
+            <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="text-xs sm:text-sm">Kembali ke Dashboard</span>
           </Button>
-          <h1 className="text-2xl font-bold">Pengaturan</h1>
-          <p className="text-muted-foreground">Kelola profil dan preferensi akun kamu</p>
+          <h1 className="text-xl font-bold sm:text-2xl">Pengaturan</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">
+            Kelola profil dan preferensi akun kamu
+          </p>
         </div>
 
         {error && (
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive" className="mb-4 sm:mb-6">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
+            <AlertDescription className="text-xs sm:text-sm">
               {error}
-              <Button variant="link" size="sm" onClick={refetch} className="ml-2 p-0 h-auto">
+              <Button
+                variant="link"
+                size="sm"
+                onClick={refetch}
+                className="ml-2 p-0 h-auto text-xs sm:text-sm"
+              >
                 Coba lagi
               </Button>
             </AlertDescription>
           </Alert>
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <ProfileSection
             fullName={profile?.fullName ?? null}
             email={profile?.email ?? ""}
@@ -109,6 +116,8 @@ export default function SettingsPage() {
           />
         </div>
       </main>
+
+      <MobileNav />
     </div>
   );
 }

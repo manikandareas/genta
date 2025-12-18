@@ -215,10 +215,10 @@ export default function PracticeSessionPage({ params }: PageProps) {
           onEndSession={() => setShowEndDialog(true)}
           isEnding={isEnding}
         />
-        <div className="mx-auto max-w-4xl space-y-4 p-4">
+        <div className="mx-auto max-w-4xl space-y-3 p-3 sm:space-y-4 sm:p-4">
           <Card>
-            <CardContent className="space-y-4 py-6">
-              <Skeleton className="h-6 w-24" />
+            <CardContent className="space-y-3 py-4 sm:space-y-4 sm:py-6">
+              <Skeleton className="h-5 w-20 sm:h-6 sm:w-24" />
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-4/5" />
               <Skeleton className="h-4 w-3/5" />
@@ -226,7 +226,7 @@ export default function PracticeSessionPage({ params }: PageProps) {
           </Card>
           <div className="space-y-2">
             {[1, 2, 3, 4, 5].map((i) => (
-              <Skeleton key={i} className="h-14 w-full" />
+              <Skeleton key={i} className="h-12 w-full sm:h-14" />
             ))}
           </div>
         </div>
@@ -244,7 +244,7 @@ export default function PracticeSessionPage({ params }: PageProps) {
         isEnding={isEnding}
       />
 
-      <div className="mx-auto max-w-4xl space-y-4 p-4">
+      <div className="mx-auto max-w-4xl space-y-3 p-3 sm:space-y-4 sm:p-4">
         {question ? (
           <>
             <QuestionCard question={question} questionNumber={questionsAttempted + 1} />
@@ -272,7 +272,7 @@ export default function PracticeSessionPage({ params }: PageProps) {
               />
             )}
 
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end pt-2 sm:pt-4">
               <SubmitButton
                 onSubmit={handleSubmit}
                 onNext={handleNext}
@@ -287,8 +287,10 @@ export default function PracticeSessionPage({ params }: PageProps) {
           </>
         ) : (
           <Card>
-            <CardContent className="py-8 text-center">
-              <p className="text-muted-foreground">Tidak ada soal tersedia untuk subtes ini.</p>
+            <CardContent className="py-6 text-center sm:py-8">
+              <p className="text-muted-foreground text-sm sm:text-base">
+                Tidak ada soal tersedia untuk subtes ini.
+              </p>
             </CardContent>
           </Card>
         )}

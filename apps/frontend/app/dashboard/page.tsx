@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import {
   Navbar,
+  MobileNav,
   WelcomeHeader,
   TryoutCtaBanner,
   StatsActivityCard,
@@ -97,7 +98,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar user={user} />
-        <main className="container mx-auto max-w-6xl px-4 py-12">
+        <main className="container mx-auto max-w-6xl px-3 py-6 sm:px-4 sm:py-12">
           <DashboardError
             message="Gagal memuat data dashboard. Silakan coba lagi."
             onRetry={handleRetry}
@@ -108,11 +109,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar user={user} />
 
       <motion.main
-        className="container mx-auto max-w-6xl space-y-6 px-4 py-12"
+        className="container mx-auto max-w-6xl space-y-4 px-3 py-6 sm:space-y-6 sm:px-4 sm:py-12"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -142,6 +143,8 @@ export default function DashboardPage() {
           <TryoutCtaBanner user={user} isLoading={isLoading} />
         </motion.div>
       </motion.main>
+
+      <MobileNav />
     </div>
   );
 }

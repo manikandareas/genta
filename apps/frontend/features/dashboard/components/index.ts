@@ -1,5 +1,6 @@
 // Dashboard Components
 export { Navbar } from "./navbar";
+export { MobileNav } from "./mobile-nav";
 export { WelcomeHeader } from "./welcome-header";
 export { CountdownBanner } from "./countdown-banner";
 export { TPSReadinessCard } from "./tps-readiness-card";

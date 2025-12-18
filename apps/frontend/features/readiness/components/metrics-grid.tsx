@@ -57,28 +57,34 @@ function MetricCard({
 
   return (
     <Card className="border bg-card/50 shadow-none">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <div className={`flex size-10 items-center justify-center rounded-lg ${iconBgColor}`}>
-            <HugeiconsIcon icon={icon} className={`size-5 ${iconColor}`} />
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div
+            className={`flex size-8 sm:size-10 items-center justify-center rounded-lg flex-shrink-0 ${iconBgColor}`}
+          >
+            <HugeiconsIcon icon={icon} className={`size-4 sm:size-5 ${iconColor}`} />
           </div>
-          <div>
-            <p className="text-xs text-muted-foreground">{label}</p>
+          <div className="min-w-0">
+            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{label}</p>
             <div className="flex items-baseline gap-0.5">
               {typeof value === "number" ? (
                 <>
                   <NumberFlow
                     value={value}
-                    className="text-xl font-bold tracking-tight"
+                    className="text-lg sm:text-xl font-bold tracking-tight"
                     format={{ maximumFractionDigits: 1 }}
                   />
-                  {suffix && <span className="text-sm text-muted-foreground">{suffix}</span>}
+                  {suffix && (
+                    <span className="text-xs sm:text-sm text-muted-foreground">{suffix}</span>
+                  )}
                 </>
               ) : (
-                <span className="text-xl font-bold tracking-tight">{value}</span>
+                <span className="text-lg sm:text-xl font-bold tracking-tight">{value}</span>
               )}
             </div>
-            {subtext && <p className="text-[10px] text-muted-foreground">{subtext}</p>}
+            {subtext && (
+              <p className="text-[9px] sm:text-[10px] text-muted-foreground truncate">{subtext}</p>
+            )}
           </div>
         </div>
       </CardContent>
@@ -88,7 +94,7 @@ function MetricCard({
 
 export function MetricsGrid({ data, isLoading }: MetricsGridProps) {
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
       <MetricCard
         icon={PercentIcon}
         iconColor="text-blue-500"

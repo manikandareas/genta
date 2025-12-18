@@ -29,22 +29,24 @@ export default function PracticePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b bg-card px-4 py-3">
-        <div className="mx-auto flex max-w-6xl items-center gap-3">
-          <Button variant="ghost" size="icon-sm" asChild>
+      <div className="border-b bg-card px-3 py-2 sm:px-4 sm:py-3">
+        <div className="mx-auto flex max-w-6xl items-center gap-2 sm:gap-3">
+          <Button variant="ghost" size="icon-sm" asChild className="size-8 sm:size-9">
             <Link href="/dashboard">
-              <HugeiconsIcon icon={ArrowLeft01Icon} />
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4 sm:size-5" />
             </Link>
           </Button>
           <div>
-            <h1 className="text-lg font-semibold">Pilih Subtes</h1>
-            <p className="text-muted-foreground text-xs">Pilih subtes yang ingin kamu latih</p>
+            <h1 className="text-base font-semibold sm:text-lg">Pilih Subtes</h1>
+            <p className="text-muted-foreground text-[10px] sm:text-xs">
+              Pilih subtes yang ingin kamu latih
+            </p>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="mx-auto max-w-6xl p-4 sm:p-6">
+      <div className="mx-auto max-w-6xl p-3 sm:p-6">
         {error && (
           <Card className="mb-6 border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30">
             <CardContent className="py-3">

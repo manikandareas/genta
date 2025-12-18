@@ -35,11 +35,11 @@ export default function ReadinessDetailPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto max-w-6xl px-4 py-8">
+      <div className="container mx-auto max-w-6xl px-3 py-4 sm:px-4 sm:py-8">
         <ReadinessHeader section={section} />
-        <div className="mt-8 flex flex-col items-center justify-center rounded-lg border bg-card/50 p-8">
-          <p className="text-muted-foreground">{error}</p>
-          <Button onClick={refetch} variant="outline" className="mt-4">
+        <div className="mt-4 flex flex-col items-center justify-center rounded-lg border bg-card/50 p-6 sm:mt-8 sm:p-8">
+          <p className="text-muted-foreground text-sm sm:text-base text-center">{error}</p>
+          <Button onClick={refetch} variant="outline" className="mt-4" size="sm">
             <HugeiconsIcon icon={RefreshIcon} className="mr-2 size-4" />
             Try Again
           </Button>
@@ -49,25 +49,25 @@ export default function ReadinessDetailPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-8">
+    <div className="container mx-auto max-w-6xl px-3 py-4 sm:px-4 sm:py-8">
       {/* Header */}
       <ReadinessHeader section={section} isLoading={isLoading} />
 
       {/* Metrics Grid */}
-      <div className="mt-8">
+      <div className="mt-4 sm:mt-8">
         <MetricsGrid data={data} isLoading={isLoading} />
       </div>
 
       {/* Main Content Grid */}
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+      <div className="mt-4 grid gap-4 sm:mt-8 sm:gap-6 lg:grid-cols-2">
         {/* Left Column */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <ThetaGauge data={data} isLoading={isLoading} />
           <AccuracyTrendChart data={data?.accuracy_trend} isLoading={isLoading} />
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <SubtypeBreakdown data={data?.subtype_breakdown} isLoading={isLoading} />
           <NextStepsCard
             data={data?.next_steps}

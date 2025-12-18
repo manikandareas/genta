@@ -94,7 +94,7 @@ export function PerformanceTable({ data, isLoading }: PerformanceTableProps) {
         <CardHeader className="pb-2">
           <Skeleton className="h-4 w-40" />
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 sm:px-6">
           <div className="space-y-2">
             {Array.from({ length: 7 }).map((_, i) => (
               <Skeleton key={i} className="h-10 w-full" />
@@ -110,76 +110,90 @@ export function PerformanceTable({ data, isLoading }: PerformanceTableProps) {
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium">Detail Performa per Subtes</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-3 sm:px-6">
         {!data || data.length === 0 ? (
           <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
             Belum ada data. Mulai latihan untuk melihat progresmu!
           </div>
         ) : (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[180px]">
-                    <SortButton field="section">Subtes</SortButton>
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <SortButton field="accuracy">Akurasi</SortButton>
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <SortButton field="attempts">Soal</SortButton>
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <SortButton field="correct">Benar</SortButton>
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <SortButton field="avg_time_seconds">Rata-rata Waktu</SortButton>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedData.map((row) => {
-                  const isTPS = TPS_SECTIONS.includes(row.section as (typeof TPS_SECTIONS)[number]);
-                  return (
-                    <TableRow key={row.section}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={cn(
-                              "size-2 rounded-full",
-                              isTPS ? "bg-blue-500" : "bg-emerald-500",
-                            )}
-                          />
-                          <div>
-                            <div className="font-medium">{row.section}</div>
-                            <div className="text-xs text-muted-foreground">{row.section_name}</div>
+          <div className="-mx-3 sm:mx-0 sm:rounded-md sm:border">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[120px] sm:w-[180px]">
+                      <SortButton field="section">Subtes</SortButton>
+                    </TableHead>
+                    <TableHead className="text-right">
+                      <SortButton field="accuracy">Akurasi</SortButton>
+                    </TableHead>
+                    <TableHead className="text-right hidden sm:table-cell">
+                      <SortButton field="attempts">Soal</SortButton>
+                    </TableHead>
+                    <TableHead className="text-right hidden sm:table-cell">
+                      <SortButton field="correct">Benar</SortButton>
+                    </TableHead>
+                    <TableHead className="text-right hidden md:table-cell">
+                      <SortButton field="avg_time_seconds">Rata-rata Waktu</SortButton>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedData.map((row) => {
+                    const isTPS = TPS_SECTIONS.includes(
+                      row.section as (typeof TPS_SECTIONS)[number],
+                    );
+                    return (
+                      <TableRow key={row.section}>
+                        <TableCell className="py-2 sm:py-4">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={cn(
+                                "size-2 rounded-full flex-shrink-0",
+                                isTPS ? "bg-blue-500" : "bg-emerald-500",
+                              )}
+                            />
+                            <div className="min-w-0">
+                              <div className="font-medium text-sm">{row.section}</div>
+                              <div className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                                {row.section_name}
+                              </div>
+                              {/* Mobile-only: show attempts/correct inline */}
+                              <div className="text-[10px] text-muted-foreground sm:hidden">
+                                {row.correct}/{row.attempts} benar
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <span
-                          className={cn(
-                            "font-medium",
-                            row.accuracy >= 75
-                              ? "text-emerald-500"
-                              : row.accuracy >= 50
-                                ? "text-amber-500"
-                                : "text-rose-500",
-                          )}
-                        >
-                          {row.accuracy.toFixed(1)}%
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">{row.attempts}</TableCell>
-                      <TableCell className="text-right">{row.correct}</TableCell>
-                      <TableCell className="text-right text-muted-foreground">
-                        {formatTime(row.avg_time_seconds)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                        </TableCell>
+                        <TableCell className="text-right py-2 sm:py-4">
+                          <span
+                            className={cn(
+                              "font-medium text-sm",
+                              row.accuracy >= 75
+                                ? "text-emerald-500"
+                                : row.accuracy >= 50
+                                  ? "text-amber-500"
+                                  : "text-rose-500",
+                            )}
+                          >
+                            {row.accuracy.toFixed(1)}%
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right hidden sm:table-cell">
+                          {row.attempts}
+                        </TableCell>
+                        <TableCell className="text-right hidden sm:table-cell">
+                          {row.correct}
+                        </TableCell>
+                        <TableCell className="text-right text-muted-foreground hidden md:table-cell">
+                          {formatTime(row.avg_time_seconds)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         )}
       </CardContent>

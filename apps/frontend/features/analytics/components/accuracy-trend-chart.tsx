@@ -54,19 +54,19 @@ export function AccuracyTrendChart({ data, periodDays, isLoading }: AccuracyTren
 
   return (
     <Card className="border bg-card/50 shadow-none">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium">
+      <CardHeader className="pb-2 px-4 sm:px-6">
+        <CardTitle className="text-xs sm:text-sm font-medium">
           Tren Akurasi ({periodDays} Hari Terakhir)
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-2 sm:px-6">
         {chartData.length === 0 ? (
-          <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
+          <div className="flex h-[200px] sm:h-[280px] items-center justify-center text-xs sm:text-sm text-muted-foreground">
             Belum ada data. Mulai latihan untuk melihat progresmu!
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-[280px] w-full">
-            <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[280px] w-full">
+            <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <defs>
                 <linearGradient id="accuracyGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="var(--color-accuracy)" stopOpacity={0.3} />

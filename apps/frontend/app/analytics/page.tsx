@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Navbar } from "@/features/dashboard";
+import { Navbar, MobileNav } from "@/features/dashboard";
 import { useUser } from "@/features/dashboard/hooks";
 import {
   TimeRangeFilter,
@@ -62,11 +62,11 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar user={user} />
 
       <motion.main
-        className="container mx-auto max-w-6xl space-y-6 px-4 py-12"
+        className="container mx-auto max-w-6xl space-y-4 px-3 py-6 sm:space-y-6 sm:px-4 sm:py-12"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -74,11 +74,11 @@ export default function AnalyticsPage() {
         {/* Header with title and time range filter */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
         >
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="text-xl font-bold tracking-tight sm:text-2xl">Analytics</h1>
+            <p className="text-xs text-muted-foreground sm:text-sm">
               Pantau perkembangan belajarmu secara detail
             </p>
           </div>
@@ -97,7 +97,7 @@ export default function AnalyticsPage() {
         </motion.div>
 
         {/* Charts Grid */}
-        <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-2">
+        <motion.div variants={itemVariants} className="grid gap-4 sm:gap-6 lg:grid-cols-2">
           <AccuracyTrendChart
             data={progress?.accuracy_trend}
             periodDays={days}
@@ -111,6 +111,8 @@ export default function AnalyticsPage() {
           <PerformanceTable data={progress?.section_breakdown} isLoading={isLoading} />
         </motion.div>
       </motion.main>
+
+      <MobileNav />
     </div>
   );
 }
